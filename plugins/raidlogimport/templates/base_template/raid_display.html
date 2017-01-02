@@ -1,0 +1,28 @@
+<table class="table fullwidth colorswitch">
+	<tr>
+		<th colspan="4">{L_raids}</th>
+	</tr>
+	<!-- BEGIN raids -->
+	<tr>
+		<th colspan="4">{raids.COUNT}. {L_raid}: </th>
+	</tr>
+	<tr>
+		<td colspan="2">{L_rli_start}: {raids.START_DATE} {raids.START_TIME}</td>
+		<td colspan="2">{L_rli_end}: {raids.END_DATE} {raids.END_TIME}</td>
+	</tr>
+		<tr>
+		<td colspan="2">{L_event}: {raids.EVENT}</td>
+		<td colspan="2">{L_value}: {raids.VALUE}</td>
+	</tr>
+	<tr>
+		<td colspan="4">{L_note}: {raids.NOTE}</td>
+	</tr>
+	<tr>
+		<td colspan="4">{L_rli_bosskills}:</td>
+	</tr>
+	<tr>
+		<td width="33%">{L_name}</td><td colspan="2" width="33%">{L_time}</td><td width="33%">{L_value}</td>
+	</tr>
+	{raids.BOSSKILLS}
+<!-- END raids -->
+</table>

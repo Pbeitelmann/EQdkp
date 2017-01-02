@@ -1,0 +1,543 @@
+<script language="JavaScript" type="text/javascript">
+//<![CDATA[
+$(function(){
+	$('[name="modstat_change[]"]').change(function(){
+		var number_attendees	= $(".status_confirm:checked").length;
+		var lang_attendeetext	= '{L_raidevent_raid_selected_attendees}';
+		if(number_attendees > 0){
+			if($('#bottommenu_chars').is(":visible")){
+				// move it a bit
+				$('#bottommenu_chars').animate({bottom:'42px'}, 500);
+			}else{
+				$('#bottommenu_admin').addClass("bottommenu_roundedcorner");
+			}
+			$('#bottommenu_admin').fadeIn(800);
+			$('#bottommenu_count').text(lang_attendeetext.replace('#', number_attendees));
+		}else{
+			$('#bottommenu_admin').fadeOut(300);
+			if($('#bottommenu_chars').is(":visible")){
+				$('#bottommenu_chars').animate({bottom:'0px'}, 500);
+			}
+		}
+	}).trigger('change');
+
+	$(document).on("click", "div.attendee_box", function (event) {
+		var target = $(event.target);
+		if(target.is('.buttonblock, .char_adminmenu')) return;
+
+		if (target.is('input:checkbox')) {
+			return;
+		}
+		var checkbox = $(this).find("input[type='checkbox']");
+		$(this).toggleClass("ui-state-highlight", !checkbox.is(':checked'));
+		checkbox.prop("checked", !checkbox.is(':checked'));
+		$('[name="modstat_change[]"]').trigger('change');
+	});
+
+	$('.guesttooltip').each(function() {
+		var guestid		= $(this).data('guestid');
+		var approval	= $(this).data('approval');
+		var titletext	= '';
+		if(approval){
+			var titletext = '<div style="text-align:right;margin-right:-26px;"><i class="fa fa-thumbs-up fa-lg hand" onclick="ChangeGuestStatus('+guestid+', 0);"></i>   <i class="fa fa-thumbs-down fa-lg hand" onclick="ChangeGuestStatus('+guestid+', 2);"></i>   <i class="fa fa-question-circle fa-lg hand" onclick="ChangeGuestStatus('+guestid+', 3);"></i>   <i class="fa fa-trash-o fa-lg hand" onclick="DeleteGuest('+guestid+');"></i></div>';
+		}else{
+			var titletext = '<div style="text-align:right;margin-right:-26px;"><i class="fa fa-pencil fa-lg hand" onclick="EditGuest('+guestid+');"></i>  <i class="fa fa-trash-o fa-lg hand" onclick="DeleteGuest('+guestid+');"></i></div>';
+		}
+		$(this).qtip({
+			content: {
+				text: $(this).next('.guesttooltip-data'),
+				<!-- IF IS_OPERATOR -->title: {
+					text: titletext,
+					button: false
+				}<!-- ENDIF -->
+			},
+			hide: {
+				fixed: true,
+				delay: 300
+			},
+			position: {
+				at: 'bottom center',
+				my: 'top center'
+			},
+			style: {
+				tip: {
+					corner: true
+				},
+				width: 300,
+				widget: true
+			}
+		});
+	});
+
+	$(".guesteditpanel").click( function(){
+		$(".guestpanel", this).show();
+	});
+	$(".guesteditpanel").mouseleave( function(){
+		$(".guestpanel", this).hide();
+	});
+
+	$('#addguest, #button_guestattend').click( function(){
+		AddGuest('{EVENT_ID}');
+	});
+
+	$('#raidcal_change_signin').click(function(){
+		$('#toogleRaidcalSignin').show();
+		$('#raidcal_alrdysignin').hide();
+	});
+
+	$('.char_adminmenu').click(function (){
+		var charid		= $(this).attr('data-character-id');
+		var $this		= $(this);
+
+		if($('#bottommenu_admin').is(":visible")){
+			$('#bottommenu_admin').removeClass("bottommenu_roundedcorner");
+			$('#bottommenu_chars').css("bottom", "42px");
+		}else{
+			$('#bottommenu_chars').css("bottom", "0px");
+		}
+		$('#bottommenu_chars_html').html($('#' + charid + '').html());
+
+		if($('#bottommenu_chars').is(":visible")){
+			console.log($('#bottommenu_chars').data('charid'));
+			if($('#bottommenu_chars').data('charid') === charid){
+				$('#bottommenu_chars').fadeOut( "slow");
+				$('#bottommenu_admin').addClass("bottommenu_roundedcorner");
+			}else{
+				$('#bottommenu_chars').data('charid', charid);
+			}
+		}else{
+			$('#bottommenu_chars').fadeIn( "slow");
+			$('#bottommenu_chars').data('charid', charid);
+		}
+
+
+		$('[name="submit_charchange"]').click(function(){
+			$.post("{U_CALENDAREVENT}", {
+				change_char: true,
+				charchange_status: $(this).parent().find('.charchange_status').val(),
+				charchange_role: $(this).parent().find('[name="charchange_role"]').val(),
+				charchange_char: $(this).parent().find('[name="charchange_char"]').val(),
+				subscribed_member_id : $(this).parent().find('[name="charchange_attendee"]').val(),
+				eventid: $('[name="eventid"]').val(),
+				link_hash: '{CSRF_CHANGECHAR_TOKEN}'
+			},
+			function(data){
+				window.location = '{U_CALENDAREVENT}';
+			});
+		});
+
+		$('[name="submit_groupchange"]').click(function(){
+			$.post("{U_CALENDAREVENT}", {
+				change_group: true,
+				groupchange_group: $(this).parent().find('[name="groupchange_group"]').val(),
+				subscribed_member_id: $(this).parent().find('[name="groupchange_attendee"]').val(),
+				eventid: $('[name="eventid"]').val(),
+				link_hash: '{CSRF_CHANGEGRP_TOKEN}'
+			},
+			function(data){
+				window.location = '{U_CALENDAREVENT}';
+			});
+		});
+
+		$('[name="submit_notechange"]').click(function(){
+			$.post("{U_CALENDAREVENT}", {
+				change_note: true,
+				notechange_note: $(this).parent().find('[name="notechange_note"]').val(),
+				subscribed_member_id: $(this).parent().find('[name="notechange_attendee"]').val(),
+				eventid: $('[name="eventid"]').val(),
+				link_hash: '{CSRF_CHANGENOTE_TOKEN}'
+			},
+			function(data){
+				window.location = '{U_CALENDAREVENT}';
+			});
+		});
+	});
+});
+
+<!-- IF S_NOTSIGNED_VISIBLE -->
+$(function(){
+	var a_checkboxes		= [];
+
+	$(".notsigned_button").click(function(){
+		$(".notsignedpanel").toggle("fast");
+		$(".notsigned_button i").toggleClass("fa fa-plus-circle");
+		$(".notsigned_button i").toggleClass("fa fa-minus-circle");
+		return false;
+	});
+
+	$(".notsignedpanel_close").click(function(){
+		$(".notsignedpanel").hide("fast");
+		$(".notsigned_button i").toggleClass("fa fa-minus-circle");
+		$(".notsigned_button i").toggleClass("fa fa-plus-circle");
+	});
+
+	// the search filed
+	var unsigned_attendees_f	= unsigned_attendees;
+
+	$('#notsignedfilter, #notsignedlevel, #notsignedactive').bind('keyup change', function(){
+		searchname				= $('#notsignedfilter').val();
+		levelfilter				= $('#notsignedlevel').val();
+		filter_unsigned			= -1;
+		unsigned_attendees_f 	= unsigned_attendees;
+
+		// show only active members
+		if($('#notsignedactive').is(':checked')){
+			unsigned_attendees_f = $.grep(unsigned_attendees_f, function(unsignarr){
+				return unsignarr.active > 0;
+			});
+		}
+
+		// filter by level
+		if(levelfilter > 0 && levelfilter != ''){
+			unsigned_attendees_f = $.grep(unsigned_attendees_f, function(unsignarr){
+				return unsignarr.level >= levelfilter;
+			});
+		}
+
+		if(searchname != ''){
+			unsigned_attendees_f = $.grep(unsigned_attendees_f, function(unsignarr){
+				return unsignarr.name.match(new RegExp(searchname, 'i'));
+			});
+		}
+
+		// populate the filter
+		if(unsigned_attendees_f.length > 0){
+			filter_unsigned			= [];
+			$.each(unsigned_attendees_f, function(i, item) {
+				filter_unsigned.push(item.id);
+			});
+		}
+
+		// populate now
+		populate_unsigned(unsigned_attendees, a_checkboxes, filter_unsigned);
+
+		// disable the right chars..
+		$('.notsigned_check:checkbox:checked').each(function() {
+			check_unsigned(this, unsigned_attendees_f, a_checkboxes);
+		});
+	});
+
+	// Build the unsigned list
+	populate_unsigned(unsigned_attendees, '');
+
+	// handle the
+	$(document).on("click", '.notsigned_check', function(){
+		check_unsigned(this, unsigned_attendees_f, a_checkboxes);
+	});
+});
+
+function check_unsigned(selector, unsigned_attendees_f, a_checkboxes){
+	var memberid	= $(selector).val();
+	var userid		= $(selector).attr('title');
+
+	// save the checkbox state to the array
+	if($(selector).prop('checked')) {
+		a_checkboxes.push(parseInt($(selector).val()));
+	}else{
+		a_checkboxes.splice($.inArray(parseInt($(selector).val()), a_checkboxes) ,1);
+	}
+
+	// get the ids of the selected user
+	var userchars = $.map(unsigned_attendees_f, function(value, key) {
+		if (value.userid == userid){
+			return value.id;
+		}
+	});
+
+	// handle the checked/unchecked things
+	if(userchars.length > 1){
+		if($(selector).prop('checked')) {
+			$.each(userchars, function(index, value){
+				if(memberid != value){
+					$('#member'+value).attr("disabled", true);
+					$('#memberid_'+value).css("textDecoration", "line-through");
+					if($('#memroles'+value).length > 0){
+						$('#memroles'+value).attr("disabled", true);
+					}
+				}
+			});
+		}else{
+			$.each(userchars, function(index, value){
+				$('#member'+value).attr("disabled", false);
+				$('#memberid_'+value).css("textDecoration", "none");
+				if($('#memroles'+value).length > 0){
+					$('#memroles'+value).attr("disabled", false);
+				}
+			});
+		}
+	}
+}
+
+function populate_unsigned(arrAttendees, arrCheckboxes, arrFilter){
+	attoutput = '';
+	if(arrAttendees != null && arrAttendees.length > 0) {
+		$.each(arrAttendees, function(i, item) {
+			checkbox_checked	= (arrCheckboxes.length > 0 && $.inArray(parseInt(item.id), arrCheckboxes) != -1) ? 'checked="checked"' : '';
+			filter_applied		= ((typeof(arrFilter) != "undefined" && arrFilter.length > 0 && $.inArray(parseInt(item.id), arrFilter) == -1) || arrFilter == -1) ? '  style="display: none;"' : '';
+			console.log(arrFilter);console.log(filter_applied);
+			attoutput += '<div id="unsigened_'+item.id+'"'+filter_applied+'>';
+			attoutput += '<!-- IF IS_OPERATOR --><input type="checkbox" name="memberid[]" value="'+item.id+'" id="member'+item.id+'" title="'+item.userid+'" class="notsigned_check" '+checkbox_checked+' /> <!-- ENDIF -->';
+			if(item.class_icon != ''){
+				attoutput += item.class_icon;
+			}
+			away_marking = (item.away) ? ' unsigened_away' : 'class_'+item.class_id;
+			attoutput += ' <span class="class_'+away_marking+'" id="memberid_'+item.id+'">'+item.name+'</span>';
+
+			if(item.roles != ''){
+				console.log(item.roles);
+				attoutput += '<select size="1" name="memrole['+item.id+']" id="memroles'+item.id+'" class="input">';
+				$.each(item.roles, function(roleindex, rolename) {
+					if (item.defaultrole == roleindex){
+						var selected = ' selected="selected"';
+					} else {
+						var selected = '';
+					}
+					attoutput += '<option value="'+roleindex+'"'+selected+'>'+rolename+'</option>';
+				});
+				attoutput += '</select>';
+			}
+			attoutput += "</div>";
+		});
+	}
+	$("#memberScroller").html(attoutput);
+}
+function ChangeGuestStatus(guestid, status){
+	$.post("{U_CALENDAREVENT}", {
+		confirm_guest: true,
+		confirm_id: guestid,
+		gueststatus: status,
+		eventid: '{EVENT_ID}',
+		link_hash: '{CSRF_GUESTAPPRV_TOKEN}'
+	},
+	function(data){
+		window.location = '{U_CALENDAREVENT}';
+	});
+}
+
+<!-- ENDIF -->
+//]]>
+</script>
+<form name="guestp" method="get" action="{ACTION}">
+	<input type="hidden" name="eventid" value="{EVENT_ID}" />
+	<input type="hidden" name="guestid" value="" id="guestid_field" />
+	{CSRF_TOKEN}
+</form>
+
+<!-- IF S_NOTSIGNED_VISIBLE -->
+<div class="notsignedpanel">
+	<div class="notsignedpanel_close">&nbsp;</div>
+	<form name="unsingnn" method="post" action="{ACTION}">
+		<input type="hidden" name="eventid" value="{EVENT_ID}" />
+		<div id='pnlHeader'>{L_raidevent_raid_unsigned_head}</div><br/>
+
+		<fieldset class="settings">
+			<dl>
+				<dt><label>{L_raidevent_raid_unsigned_search}</label></dt>
+				<dd><input type="text" name="notsignedfilter" id="notsignedfilter" value="" /></dd>
+			</dl>
+
+			<dl>
+				<dt><label>{L_raidevent_raid_unsigned_active}</label></dt>
+				<dd><input type="checkbox" name="notsignedactive" value="1" id="notsignedactive" /></dd>
+			</dl>
+			<dl>
+				<dt><label>{L_raidevent_raid_unsigned_level}</label><br /><span>{L_raidevent_raid_unsigned_level_help}</span></dt>
+				<dd><input type="text" name="notsignedlevel" id="notsignedlevel" value="0" size="5" /></dd>
+			</dl>
+		</fieldset>
+
+		<div id="memberScroller">
+		</div>
+		<!-- IF IS_OPERATOR -->
+		<div>
+			{DD_NOTSIGNEDINSTATUS} <input type="submit" value="{L_raidevent_raid_nots_button}" name="add_notsigned" class="mainoption" />
+		</div>
+		<!-- ENDIF -->
+	{CSRF_TOKEN}
+	</form>
+</div>
+<!-- ENDIF -->
+
+<!-- IF S_NEXT_OR_PREV_RAIDEVENT -->
+<div>
+	<!-- IF S_PREV_RAID_EVENT -->
+	<div class="floatLeft">
+		<a href="{U_PREV_RAID_EVENT}"><i class="fa fa-chevron-left"></i> {PREV_RAID_EVENTNAME}</a>
+	</div>
+	<!-- ENDIF -->
+
+	<!-- IF S_NEXT_RAID_EVENT -->
+	<div class="floatRight">
+		<a href="{U_NEXT_RAID_EVENT}">{NEXT_RAID_EVENTNAME} <i class="fa fa-chevron-right"></i></a>
+	</div>
+	<!-- ENDIF -->
+	<div class="clear"></div>
+	<br />
+</div>
+<!-- ENDIF -->
+
+<form method="post" action="{ACTION}" name="post">
+	<input type="hidden" name="event_id" value="{EVENT_ID}" />
+	<input type="hidden" name="subscribed_member_id" value="{SUBSCRIBED_MEMBER_ID}" />
+
+
+		<div class="table fullwidth eventdata-raid eventid-{EVENT_ID}">
+		<div class="tr">
+			<div class="td bigDateTd" style="width: 100px;">
+				<div class="bigDateContainer hiddenSmartphone">
+					{RAIDICON}
+					<span class="middleDateNumber">{DATE_DAY}</span>
+					<span class="articleMonth">{DATE_MONTH}</span>
+					<span class="middleDateTime">{RAIDTIME_START}</span>
+				</div>
+			</div>
+			<div class="td" style="vertical-align: top;">
+				<div class="floatRight">{MENU_OPTIONS}</div>
+
+				<h2>{RAIDNAME}</h2>
+				<div class="eventdata-header">
+					<div class="eventdata-details">
+						<div class="eventdata-details-date"><i class="fa fa-lg fa-calendar-o"></i> {RAIDDATE}, {L_raidevent_raid_time_from} {RAIDTIME_START} {L_raidevent_raid_time_till} {RAIDTIME_END}</div>
+						<div class="eventdata-details-deadline"><i class="fa fa-calendar-times-o fa-lg"></i> {L_calendar_deadline} {RAIDTIME_DEADLINE} </div>
+						<div class="eventdata-details-calendar"><i class="fa fa-calendar fa-lg"></i> {CALENDAR}</div>
+						<!-- IF RAIDDATE_ADDED -->
+						<div class="eventdata-details-added"><i class="fa fa-lg fa-plus"></i> {L_raidevent_raid_added_on} {RAIDDATE_ADDED}, {L_raidevent_raid_addedby} {RAID_ADDEDBY}</div>
+						<!-- ENDIF -->
+						<!-- IF RAIDLEADER -->
+						<div class="eventdata-details-raidleader"><i class="fa fa-users fa-lg" title="{L_raidevent_raidleader}"></i> {RAIDLEADER} </div>
+						<!-- ENDIF -->
+					</div>
+				</div>
+				<!-- IF RAIDNOTE -->
+				<br />
+				<div class="event_raidnote">
+					{RAIDNOTE}
+				</div>
+				<!-- ENDIF -->
+			</div>
+		</div>
+	</div>
+
+	<!-- IF not RAID_CLOSED and not RAID_DEADLINE and not NO_CHAR_ASSIGNED -->
+	<div id="toogleRaidcalSignin" <!-- IF IS_SIGNEDIN -->style="display:none"<!-- ENDIF -->>
+		<h2>{L_raidevent_raid_signin}<span class="toggle_button">&nbsp;</span></h2>
+		<fieldset class="toggle_container settings smallsettings">
+			<!-- IF IS_SIGNEDIN and IS_STATUSCHANGE_WARN and IS_STATUS_CONFIRMED -->
+			<div class="infobox infobox-large infobox-red clearfix">
+				<i class="fa fa-exclamation-triangle fa-4x pull-left"></i> {L_raidevent_raid_statuschange_warning}
+			</div>
+			<!-- ENDIF -->
+			<dl>
+				<dt><label>{L_raidevent_raid_char_role}</label></dt>
+				<dd>{DD_MYCHARS} {DD_MYROLE}</dd>
+			</dl>
+			<dl>
+				<dt><label>{L_note}</label></dt>
+				<dd><input type="text" name="signupnote" size="45" class="input" value="{PLAYER_NOTE}" /></dd>
+			</dl>
+			<dl>
+				<dt><label>{L_status}<!-- IF IS_SIGNEDIN and IS_STATUSCHANGE_WARN --> <i class="fa fa-exclamation-triangle coretip" data-coretip="{L_raidevent_raid_statuschange_warning}"></i><!-- ENDIF --></label></dt>
+				<dd>{DD_SIGNUPSTATUS} </dd>
+			</dl>
+			<input type="submit" name="update_status" value="{L_raidevent_raid_statusbttn}" 	class="mainoption" />
+		</fieldset>
+	</div>
+
+	<div class="infobox infobox-large infobox-green clearfix" id="raidcal_alrdysignin" <!-- IF not IS_SIGNEDIN -->style="display:none"<!-- ENDIF -->>
+		<i class="fa fa-user fa-4x pull-left"></i>
+		{L_SIGNEDIN_MSG}
+		<input type="button" value="{L_raidevent_raid_changesignin}" id="raidcal_change_signin" class="mainoption bi_edit" />
+	</div>
+	<!-- ELSE -->
+	<!-- IF NO_CHAR_ASSIGNED and S_LOGGED_IN -->
+	<div class="infobox infobox-large infobox-red clearfix">
+		<i class="fa fa-male fa-4x pull-left"></i> {L_raidevent_raid_nochar}
+	</div>
+	<!-- ENDIF -->
+	<!-- IF RAID_CLOSED -->
+	<div class="infobox infobox-large infobox-red clearfix">
+		<i class="fa fa-clock fa-4x pull-left"></i> {L_raidevent_raid_closed}
+	</div>
+	<!-- ENDIF -->
+	<!-- IF RAID_DEADLINE -->
+	<div class="infobox infobox-large infobox-red clearfix">
+		<i class="fa fa-clock-o fa-4x pull-left"></i> {L_raidevent_raid_deadl_reach}
+	</div>
+	<!-- ENDIF -->
+	<!-- ENDIF -->
+	<!-- IF NO_STATUSES -->
+	<div class="infobox infobox-large infobox-red clearfix">
+		<i class="fa fa-exclamation-triangle fa-4x pull-left"></i> {L_raidevent_raid_no_status}
+	</div>
+	<!-- ENDIF -->
+	<!-- IF ROLESWOCLASS -->
+	<div class="infobox infobox-large infobox-red clearfix">
+		<i class="fa fa-exclamation-triangle fa-4x pull-left"></i> {L_raidevent_raid_roleswoclass}
+	</div>
+	<!-- ENDIF -->
+
+
+	<div class="table raidcal_buttonrow">
+		<div class="tr">
+			<!-- IF SHOW_RAIDGROUPS -->
+			<div class="td raidcal_buttonrow_left">
+				<span class="group_selector"><i class="fa fa-users fa-lg"></i> {DD_RAIDGROUPS}</span>
+			</div>
+			<!-- ENDIF -->
+			<!-- IF IS_OPERATOR and SHOW_CONFIRMBUTTON -->
+			<div class="td raidcal_buttonrow_middle">
+				<button type="submit" name="confirmall" id="button_confirmall">{L_raidevent_raid_confirmall}</button>
+			</div>
+			<!-- ELSE -->
+				<!-- IF not IS_SIGNEDIN and SHOW_GUESTAPPLICATION -->
+				<div class="td raidcal_buttonrow_middle">
+					<button type="button" name="guestattend" id="button_guestattend"><i class="fa fa-user-plus fa-lg"></i> {L_raidevent_guest_attendraid}</button>
+				</div>
+				<!-- ENDIF -->
+			<!-- ENDIF -->
+			<!-- IF S_NOTSIGNED_VISIBLE -->
+			<div class="td raidcal_buttonrow_right">
+				<button type="button" class="notsigned_button"><i class="fa fa-plus-circle"></i>{L_raidevent_raid_unsigned_button}</button>
+			</div>
+			<!-- ENDIF -->
+		</div>
+	</div>
+
+	<div class="row1">
+		<div id="bottommenu_chars" data-charid="" class="bottommenu_roundedcorner">
+			<span id="bottommenu_chars_html"></span>
+		</div>
+
+		<!-- IF IS_OPERATOR -->
+		<div id="bottommenu_admin" class="absmiddle">
+			<div class="table bottommenu_admin_table">
+				<div class="tr">
+					<div class="td absmiddle bottommenu_admin_icons">
+						<i class="fa fa-user fa-lg"></i>
+					</div>
+					<div class="td absmiddle bottommenu_admin_status">
+						<span id="bottommenu_count"></span> - {DD_MODSIGNUPSTATUS} <button type = "submit" name="moderate_status" value="" id="moderate_status_btn"><i class="fa fa-check fa-lg"></i></button>
+					</div>
+					<div class="td absmiddle bottommenu_admin_icons">
+						<i class="fa fa-users fa-lg"></i>
+					</div>
+					<div class="td absmiddle bottommenu_admin_status">
+						<!-- IF SHOW_RAIDGROUPS -->
+						{DD_MODRAIDGROUPS} <button type = "submit" name="moderate_group" value=""><i class="fa fa-check fa-lg"></i></button>
+						<!-- ELSE -->
+						{L_raidevent_no_groups_avail}
+						<!-- ENDIF -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ENDIF -->
+		<!-- INCLUDE calendar/viewcalraid_guests.html -->
+	<!-- INCLUDE {MEMBERDATA_FILE} -->
+	</div>
+{CSRF_TOKEN}
+</form>
+
+<div class="social">
+	{MY_SOCIAL_BUTTONS}
+</div>

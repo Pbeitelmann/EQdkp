@@ -1,0 +1,158 @@
+<script>
+function gr_dep_check_value(name, value, target){
+	if ($("#"+name).val() == value){
+		$("#"+target).show();
+	} else {
+		gr_hide_target(target);
+	}
+}
+
+function gr_dep_check_cb(name, value, target){
+	if ($("input[name^='"+name+"["+value+"]'").is(":checked")){
+		$("#"+target).show();
+	} else {
+		gr_hide_target(target);
+	}
+}
+	
+function gr_dep_check_radio(name, value, target){
+	if ($("input[name="+name+"]:checked").val() == value){
+		$("#"+target).show();
+	} else {
+		gr_hide_target(target);
+	}
+}
+
+function gr_hide_target(target){
+	$("#"+target).hide();
+	$("#"+target+" input[type=checkbox]").removeAttr("checked");
+	$("#"+target+" input[type=checkbox]").trigger("change");
+	$("#"+target+" input[type=radio]").removeAttr("checked");
+	$("#"+target+" input[type=radio]").trigger("change");
+	$("#"+target+" select").val("");
+	$("#"+target+" select").trigger("change");
+}
+
+var field_data = new Array();
+$(document).ready(function(){
+	$("input[name^='gr_field'], select[name^='gr_field'], textarea[name^='gr_field']").on("change", function(){
+		gr_listener();
+	});
+	gr_listener();
+})
+
+function gr_listener(){
+	$("input[name^='gr_field']").each(function(e){
+		var name = $(this).attr("name");
+		var type = $(this).attr("type");
+		
+		if (type == "radio") field_data[name] = $("input[name="+name+"]:checked").val();
+		if (type == "text") field_data[name] = $("input[name="+name+"]").val();
+		if (type == "checkbox"){
+			
+			if ($(this).is(":checked")) {
+				field_data[name] = 1;
+			} else {
+				field_data[name] = 0;
+			}
+		}
+	})
+	$("select[name^='gr_field']").each(function(e){
+		var name = $(this).attr("name");
+		var type = $(this).attr("type");
+
+		field_data[name] = $("select[name="+name+"]").val();
+	})
+	$("textarea[name^='gr_field']").each(function(e){
+		var name = $(this).attr("name");
+		var type = $(this).attr("type");
+
+		field_data[name] = $("textarea[name="+name+"]").val();
+	})
+
+	<!-- BEGIN gr_listener_row -->
+	if ({gr_listener_row.EXPR}){
+		$("#{gr_listener_row.TARGET}").show();
+	} else {
+		gr_hide_target("{gr_listener_row.TARGET}");
+	}
+	<!-- END gr_listener_row -->	
+}
+
+</script>
+
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li class="current"><a>{L_gr_preview}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<div class="infobox infobox-large infobox-blue clearfix">
+	<i class="fa fa-info-circle fa-4x pull-left"></i> {L_gr_preview_info}
+</div>
+
+<div class="contentHeader">
+	<h1 class="contentTitle">{L_gr_preview}</h1>
+</div>
+
+<!-- IF S_SAVE -->
+<!-- BEGIN ptabs -->
+<div>
+	<!-- BEGIN fieldset -->
+
+	<fieldset class="settings mediumsettings gr_{ptabs.fieldset.ID}">
+		<legend>{ptabs.fieldset.NAME}</legend>
+		<!-- BEGIN field -->
+		<dl id="{ptabs.fieldset.field.ID}">
+			<!-- IF ptabs.fieldset.field.S_NO_DIVIDER -->
+			{ptabs.fieldset.field.NAME}
+			<!-- ELSE -->
+			<dt><label>{ptabs.fieldset.field.NAME} <!-- IF ptabs.fieldset.field.REQUIRED -->*<!-- ENDIF --></label>
+			<!-- <br /><span>{ptabs.fieldset.field.HELP}</span> -->
+			</dt>
+			<dd>{ptabs.fieldset.field.FIELD}</dd>
+			<!-- ENDIF -->
+		</dl>
+		<!-- END field -->
+	</fieldset>
+	
+
+	<!-- END fieldset -->
+</div>
+<!-- END ptabs -->
+<!-- ENDIF -->
+
+
+<form method="post" action="">
+	<!-- BEGIN tabs -->
+		<div>
+		
+			<!-- BEGIN fieldset -->
+
+			<fieldset class="settings gr_{tabs.fieldset.ID}" id="{tabs.fieldset.FID}">
+				<legend>{tabs.fieldset.NAME}</legend>
+				<!-- BEGIN field -->
+				<dl id="{tabs.fieldset.field.ID}">
+					<!-- IF tabs.fieldset.field.S_NO_DIVIDER -->
+					{tabs.fieldset.field.NAME}
+					<!-- ELSE -->
+					<dt><label>{tabs.fieldset.field.NAME} <!-- IF tabs.fieldset.field.REQUIRED -->*<!-- ENDIF --></label>
+					<br /><span>{tabs.fieldset.field.HELP}</span>
+					</dt>
+					<dd>{tabs.fieldset.field.FIELD}</dd>
+					<!-- ENDIF -->
+				</dl>
+				<!-- END field -->
+			</fieldset>
+			
+			<!-- END fieldset -->
+		</div>
+		<!-- END tabs -->
+	
+	<button type="submit" name="save"><i class="fa fa-check"></i>{L_gr_submit_request}</button>
+	<button type="reset"><i class="fa fa-trash-o"></i>{L_reset}</button>
+	
+{CSRF_TOKEN}
+</form>

@@ -1,0 +1,97 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_settings}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<form method="post" action="{ACTION}" name="{FORM_ID}" id="{FORM_ID}">
+	<div id='core_sett_tabs'>
+		<ul>
+			<!-- BEGIN tabs --> <li><a href='#fragment-{tabs.ID}'><span>{tabs.NAME}</span></a></li><!-- END tabs -->
+		</ul>
+
+		<!-- BEGIN tabs -->
+		<div id="fragment-{tabs.ID}">
+			<!-- BEGIN fieldsets -->
+			<!-- IF tabs.fieldsets.INFO -->
+			<div class="infobox infobox-large infobox-blue clearfix">
+				<i class="fa fa-info-circle fa-4x pull-left"></i> {tabs.fieldsets.INFO}
+			</div>
+			<!-- ENDIF -->
+			<fieldset class="settings">
+				<legend>{tabs.fieldsets.NAME}</legend>
+				<!-- BEGIN fields -->
+				<dl>
+					<dt><label>{tabs.fieldsets.fields.NAME}</label><br /><span>{tabs.fieldsets.fields.HELP}</span></dt>
+					<dd>{tabs.fieldsets.fields.FIELD}</dd>
+				</dl>
+				<!-- END fields -->
+			</fieldset>
+			<!-- END fieldsets -->
+		</div>
+		<!-- END tabs -->
+
+		<div align='center'>
+			<button  name="save_plus" type="submit" class="mainoption" id="save"><i class="fa fa-check"></i>{L_save}</button>
+			<button type="button" name="reset" class="liteoption" onclick="window.location='manage_settings.php{SID}'"><i class="fa fa-trash-o"></i>{L_reset}</button>
+		</div>
+	</div>
+{CSRF_TOKEN}
+<input type="hidden" id="overwrite-game" name="overwrite-game" value="0"/>
+</form>
+
+<div id="dialog-change-game" title="{L_overwrite_gamedata}" style="display:none;">
+	{L_overwrite_gamedata_info}<br /><br />
+	<label><input type="radio" name="game_overwrite" value="1" checked="checked"> {L_overwrite_gamedata_yes}</label>
+	<br /><label><input type="radio" name="game_overwrite" value="2"> {L_overwrite_gamedata_nobut}</label>
+	<br /><label><input type="radio" name="game_overwrite" value="0"> {L_overwrite_gamedata_no}</label>
+	<br /><br /><button type="button" id="game-overwrite-button"><i class="fa fa-check"></i> {L_submit}</button>
+</div>
+
+<script>
+var game_changed = false;
+var gamelang_changed = false;
+var origin_game = false;
+var origin_lang = false;
+$(document).ready(function(){
+	origin_game = $('#default_game').val();
+	origin_lang = "{SET_GAME_LANG}";
+	
+	$( "#dialog-change-game" ).dialog({
+		height: 250,
+		width: 400,
+		modal: true,
+		autoOpen: false,
+	});
+	
+	$('#default_game').on('change', function(){
+		var new_game = $('#default_game').val();
+		if(new_game != origin_game) {
+			game_changed = true;
+			$("input[name='game_overwrite'][value='1']").attr("checked","checked");
+			$( "#dialog-change-game" ).dialog('open');
+		} else {
+			game_changed = false;
+		}
+	})
+	
+	$('#game_language').on('change', function(){
+		var new_lang = $('#game_language').val();
+		if(new_lang != origin_lang && !game_changed) {
+			gamelang_changed = true;
+			$("input[name='game_overwrite'][value='0']").attr("checked","checked");
+			$( "#dialog-change-game" ).dialog('open');
+		} else {
+			gamelang_changed = false;
+		}
+	})
+	
+	$('#game-overwrite-button').on('click', function(){
+		var selected = $("input[name='game_overwrite']:checked").val();
+		$('#overwrite-game').val(selected);
+		$( "#dialog-change-game" ).dialog('close');
+	})
+})
+</script>

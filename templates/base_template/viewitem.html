@@ -1,0 +1,26 @@
+<div class="contentHeader">
+	<h1 class="contentTitle">{L_PURCHASE_HISTORY_FOR}</h1>
+</div>
+
+<table class="table fullwidth">
+	<tr class="row1">
+		<!-- IF SHOW_ITEMSTATS -->
+		<td align="center" class="viewitem-itemstats">{ITEM_STATS}</td>
+		<!-- ENDIF -->
+		<!-- IF SHOW_ITEMHISTORYA -->
+		<td align="center">{ITEM_CHART} </td>
+		<!-- ENDIF -->
+	</tr>
+</table>
+
+<!-- BEGIN droprate -->
+<div class="floatLeft" style="width: 600px">
+	<h2>{L_droprate} {droprate.POOLNAME}</h2>
+	<div id="{droprate.CHART}"></div>
+</div>
+<!-- END droprate -->
+<div class="clear"></div>
+<br />
+<table class="table fullwidth hptt colorswitch scrollable-x">
+	{BUYERS_TABLE}
+</table>

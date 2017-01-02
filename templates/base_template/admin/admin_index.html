@@ -1,0 +1,286 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li class="current"><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<!-- IF SHOW_PHP_WARNING -->
+<div class="infobox infobox-large infobox-red clearfix">
+	<i class="fa fa-exclamation-triangle fa-4x pull-left"></i> {L_php_warning}
+</div>
+<!-- ENDIF -->
+<!-- IF SHOW_BETA_WARNING -->
+<div class="infobox infobox-large infobox-red clearfix">
+	<i class="fa fa-exclamation-triangle fa-4x pull-left"></i> {L_beta_warning}
+</div>
+<!-- ENDIF -->
+<!-- IF SHOW_LIMITED_FUNCS -->
+<!-- BEGIN lim_funcs -->
+<div class="infobox infobox-large infobox-red clearfix">
+	<i class="fa fa-exclamation-triangle fa-4x pull-left"></i> {lim_funcs.TEXT}
+</div>
+<!-- END -->
+<!-- ENDIF -->
+
+<div id='admininfos_tabs'>
+  <ul>
+    <li><a href='#fragment-1'><span>{L_adminc_news}</span></a></li>
+    <li><a href='#fragment-2'><span>{L_adminc_system}</span></a></li>
+    <li><a href='#fragment-3'><span>{L_adminc_statistics}</span></a></li>
+    <li><a href='#fragment-4'><span>{L_adminc_support}</span></a></li>
+  </ul>
+
+  <div id="fragment-1">
+  	<div class="grid">
+  		<div class="onerow">
+  			<div class="col6">
+  				<h2>{L_rssadmin_head1}</h2>
+				<div id="notifications"></div>
+  			</div>
+  			<div class="col6 last">
+  				<h2>{L_rssadmin_head2} <a href="https://twitter.com/EQdkpPlus" target="new" ><i class="fa fa-twitter-square fa-lg"></i></a>
+					<a href="https://facebook.com/EQdkpPlus" target="new" ><i class="fa fa-facebook-square fa-lg"></i></a>
+					<a href="https://google.com/+Eqdkp-plusEu" target="new" ><i class="fa fa-google-plus-square fa-lg"></i></a>
+				</h2>
+				<div id="twitterfeed"></div>
+  			</div>
+  			
+  		</div>
+  	</div>
+
+  </div>
+
+  <div id="fragment-2">	
+	<fieldset class="settings smallsettings">
+		<legend>EQdkp-Plus</legend>
+		
+		<dl>
+			<dt><label>{L_liveupdate_installed_version}</label></dt>
+			<dd>{EQDKP_VERSION}</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_backup_system_data}</label></dt>
+			<dd>{DATA_FOLDER}</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_db_name}</label></dt>
+			<dd>{DATABASE_NAME}</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_table_prefix}</label></dt>
+			<dd>{TABLE_PREFIX}</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_eqdkp_started}</label></dt>
+			<dd>{EQDKP_STARTED}</dd>
+		</dl>
+	</fieldset>
+	
+	<fieldset class="settings smallsettings">
+		<legend>{L_adminc_server}</legend>
+		<dl>
+			<dt><label>PHP Version</label></dt>
+			<dd>{SERVERINFO_PHP} <a href="info_php.php{SID}"><i class="fa fa-lg fa-question-circle"></i> {L_adminc_php_info}</a></dd>
+		</dl>
+		<dl>
+			<dt><label>PHP Safe Mode</label></dt>
+			<dd>{SERVERINFO_SAFEMODE}</dd>
+		</dl>
+		<dl>
+			<dt><label>Register Globals</label></dt>
+			<dd>{SERVERINFO_REGGLOBAL}</dd>
+		</dl>
+		<dl>
+			<dt><label>CURL</label></dt>
+			<dd>{SERVERINFO_CURL}</dd>
+		</dl>
+		<dl>
+			<dt><label>Fopen</label></dt>
+			<dd>{SERVERINFO_FOPEN}</dd>
+		</dl>
+		<dl>
+			<dt><label>MySQL Version</label></dt>
+			<dd>{SERVERINFO_MYSQL}</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_database_size}</label></dt>
+			<dd>{DATABASE_SIZE}</dd>
+		</dl>
+	</fieldset>
+		
+  </div>
+  
+  <div id="fragment-3">
+  	<div class="grid" style="overflow:hidden;">
+  		<div class="col2">
+  			<h3>{L_users}</h3>
+  			<div class="circle" id="circles-1"></div>
+  			<script>
+  			var myCircle = Circles.create({
+  			  id:                  'circles-1',
+  			  radius:              60,
+  			  value:               {CIRCLE_USER_VALUE},
+  			  maxValue:            100,
+  			  textClass:    	   'circles-text',
+  			  width:               10,
+  			  text:                function(value){return '{TOTAL_USERS}';},
+  			  colors:              ['#DFF0D8', '#468847'],
+  			  duration:            400,
+  			  styleWrapper:        true,
+  			  styleText:           true
+  			});
+  			</script>
+  		
+  		</div>
+  		<div class="col2">
+  			<h3>{L_chars}</h3>
+  			<div class="circle" id="circles-2"></div>
+  			<script>
+  			var myCircle = Circles.create({
+  			  id:                  'circles-2',
+  			  radius:              60,
+  			  value:               {CIRCLE_MEMBER_VALUE},
+  			  maxValue:            100,
+  			  textClass:    	   'circles-text',
+  			  width:               10,
+  			  text:                function(value){return '{NUMBER_OF_MEMBERS}';},
+  			  colors:              ['#BEE3F7', '#45AEEA'],
+  			  duration:            400,
+  			  styleWrapper:        true,
+  			  styleText:           true
+  			});
+  			</script>
+  		
+  		</div>
+  		<div class="col2">
+  			<h3>{L_items}</h3>
+  			<div class="circle" id="circles-3"></div>
+  			<script>
+  			var myCircle = Circles.create({
+  			  id:                  'circles-3',
+  			  radius:              60,
+  			  value:               {CIRCLE_ITEMS},
+  			  maxValue:            100,
+  			  textClass:    	   'circles-text',
+  			  width:               10,
+  			  text:                function(value){return '{NUMBER_OF_ITEMS}';},
+  			  colors:              ['#FCE6A4', '#EFB917'],
+  			  duration:            400,
+  			  styleWrapper:        true,
+  			  styleText:           true
+  			});
+  			</script>
+  			<div>{L_items_per_day}: {ITEMS_PER_DAY}</div>
+  		</div>
+  		<div class="col2">
+  			<h3>{L_raids}</h3>
+  			<div class="circle" id="circles-4"></div>
+  			<script>
+  			var myCircle = Circles.create({
+  			  id:                  'circles-4',
+  			  radius:              60,
+  			  value:               {CIRCLE_RAIDS},
+  			  maxValue:            100,
+  			  textClass:    	   'circles-text',
+  			  width:               10,
+  			  text:                function(value){return '{NUMBER_OF_RAIDS}';},
+  			  colors:              ['#F8F9B6', '#D2D558'],
+  			  duration:            400,
+  			  styleWrapper:        true,
+  			  styleText:           true
+  			});
+  			</script>
+  			<div>{L_raids_per_day}: {RAIDS_PER_DAY}</div>
+  		</div>
+  		<div class="col2 last">
+  			<h3>{L_adjustments}</h3>
+  			<div class="circle" id="circles-5"></div>
+  			<script>
+  			var myCircle = Circles.create({
+  			  id:                  'circles-5',
+  			  radius:              60,
+  			  value:               {CIRCLE_ADJUSTMENTS},
+  			  maxValue:            100,
+  			  textClass:    	   'circles-text',
+  			  width:               10,
+  			  text:                function(value){return '{NUMBER_OF_ADJUSTMENTS}';},
+  			  colors:              ['#F4BCBF', '#D43A43'],
+  			  duration:            400,
+  			  styleWrapper:        true,
+  			  styleText:           true
+  			});
+  			</script>
+  			<div>{L_adjustments_per_day}: {ADJUSTMENTS_PER_DAY}</div>
+  		</div>
+  	</div>
+  	<div class="clear"></div>
+  </div>
+
+
+  <div id="fragment-4">
+    {L_adminc_support_intro}<br/><br/>
+    <table class="table fullwidth">
+
+      <tr>
+      	<td><span class="fa-stack fa-3x"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-question fa-stack-1x fa-inverse"></i></span></td>
+      	<td>{L_adminc_support_tour}</td>
+     	</tr>
+      <tr>
+        <td><span class="fa-stack fa-3x"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-wikipedia-w fa-stack-1x fa-inverse"></i></span></td>
+        <td>{L_adminc_support_wiki}</td>
+      </tr>
+       <tr>
+        <td><span class="fa-stack fa-3x"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-bug fa-stack-1x fa-inverse"></i></span></td>
+        <td>{L_adminc_support_bugtracker}</td>
+      </tr>
+      <tr>
+        <td><span class="fa-stack fa-3x"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-users fa-stack-1x fa-inverse"></i></span></td>
+        <td>{L_adminc_support_forums}</td>
+      </tr>
+      <tr>
+        <td id="support"><i class="fa fa-heart fa-5x" style="color:red;vertical-align:middle;"></i>
+						<span class="fa-stack fa-lg" style="margin-left: -30px; margin-bottom: -10px; margin-right: 10px;">
+						<i class="fa fa-circle fa-stack-2x"></i>
+  						<i class="fa fa-usd fa-stack-1x fa-inverse"></i>
+						</span></td>
+        <td>{L_support_eqdkplus}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+<br/>
+<!-- IF S_WHO_IS_ONLINE -->
+<h2>{L_who_online}</h2>
+<table  class="table fullwidth colorswitch">
+    <tr>
+      <th class="w20p left nowrap">{L_username}</th>
+      <th class="w20p lefthiddenSmartphone">{L_logged_in}</th>
+      <th class="w20p left">{L_last_update}</th>
+      <th class="w20p left">{L_location}</th>
+      <th class="w20p hiddenSmartphone left">{L_ip_address}</th>
+      <th class="hiddenSmartphone left">{L_browser}</th>
+    </tr>
+    <!-- BEGIN online_row -->
+    <tr>
+      <td class="nowrap">{online_row.USERNAME}</td>
+      <td class="hiddenSmartphone">{online_row.LOGIN}</td>
+      <td>{online_row.LAST_UPDATE}</td>
+      <td>{online_row.LOCATION}</td>
+      <td class="hiddenSmartphone"><span class="ip_resolver" title="{online_row.IP_ADDRESS}">{online_row.IP_ADDRESS}</span></td>
+      <td class="hiddenSmartphone center">{online_row.BROWSER}</td>
+    </tr>
+    <!-- END online_row -->
+    <tr>
+      <th colspan="6" class="footer">{ONLINE_FOOTCOUNT}</th>
+    </tr>
+  </table>
+<!-- ENDIF -->
+<!-- IF S_LOGS -->
+<br />
+<h2>{L_new_actions}</h2>
+<table  class="table fullwidth colorswitch">
+  {LOGS_TABLE}  
+</table>
+<!-- ENDIF -->

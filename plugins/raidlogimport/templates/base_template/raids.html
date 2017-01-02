@@ -1,0 +1,123 @@
+<!-- IF S_NORMAL_HEADER -->
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_raidlogimport}: {L_rli_check_data}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<!-- ENDIF -->
+
+<form method="post" action="{ACTION}" id="rli_import_form">
+	<div id='rli_nav_tabs'>
+		<ul>
+			<li><a href="#raids" id="rli_nav_raids"><span>{L_raids}</span></a><input type="hidden" name="checkraid" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#members" id="rli_nav_members"><span>{L_members}</span></a><input type="hidden" name="checkmem" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#items" id="rli_nav_items"><span>{L_items}</span></a><input type="hidden" name="checkitem" value="{L_update}" disabled="disabled" /></li>
+			<!-- IF not S_DEACTIVATE_ADJ -->
+				<li><a href="#adjustments" id="rli_nav_adjustments"><span>{L_adjustments}</span></a><input type="hidden" name="checkadj" value="{L_update}" disabled="disabled" /></li>
+			<!-- ENDIF -->
+			<li><a href="#viewall" id="rli_nav_viewall"><span>{L_rli_check_data}</span></a><input type="hidden" name="viewall" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#finish" id="rli_nav_finish"><span>{L_rli_finish}</span></a><input type="hidden" name="insert" value="{L_update}" disabled="disabled" /></li>
+		</ul>
+		<div id="raids">
+			<!-- BEGIN raids -->
+			<div class="panel" id="raid_{raids.COUNT}" {raids.DISPLAY}>
+				<div class="panel-heading"><h3>
+					<input type="hidden" id="raid_{raids.COUNT}submit" name="raids[{raids.COUNT}][delete]" value="true" {raids.DELDIS} />
+					&nbsp;&nbsp;{raids.COUNT}. {L_raid} <i class="fa fa-trash-o fa-lg del_raid hand" title="{L_delete}" data-id="raid_{raids.COUNT}"></i></h3>
+				</div>
+			<table class="table fullwidth colorswitch">
+			  <tr>
+				<td>{L_rli_start}: {raids.START_DATE}</td>
+				<td>{L_event}: {raids.EVENT} &nbsp;&nbsp;&nbsp;&nbsp; <!-- IF L_DIFFICULTY -->{L_DIFFICULTY}: {raids.DIFF}<!-- ENDIF --></td>
+			  </tr>
+			  <tr>
+				<td>{L_rli_end}: {raids.END_DATE}</td>
+				<td>{L_rli_raid_value}:  {raids.VALUE}
+					<!-- IF USE_TIMEDKP -->&nbsp;&nbsp;&nbsp;&nbsp; {L_rli_t_points}: <input type="text" name="raids[{raids.COUNT}][timebonus]" value="{raids.TIMEBONUS}" class="input" size="6" /><!-- ENDIF -->
+					<!-- IF USE_EVENTDKP -->&nbsp;&nbsp;&nbsp;&nbsp; {L_rli_e_points}: <input type="text" name="raids[{raids.COUNT}][eventval]" value="{raids.EVENTVAL}" class="input" size="6" id="raids_{raids.COUNT}_eventval"/><!-- ENDIF -->
+				</td>
+			  </tr>
+			  <tr>
+				<td colspan="2">{L_note}: <input type="text" name="raids[{raids.COUNT}][note]" value="{raids.NOTE}" class="input" size="90" /></td>
+			  </tr>
+			  <tr>
+				<th colspan="2">{L_rli_bosskills}:</td>
+			  </tr>
+			  <tr>
+				<td colspan="2" class="colorswitch">
+					<table class="table fullwidth colorswitch">
+					<!-- BEGIN bosskills -->
+						<tr id="raid_{raids.COUNT}_boss_{raids.bosskills.BK_KEY}" {raids.bosskills.DISPLAY}>
+							<td width="20">
+								<i class="fa fa-trash-o fa-lg del_boss hand" title="{L_delete}" data-id="raid_{raids.COUNT}_boss_{raids.bosskills.BK_KEY}"></i>
+								<input type="hidden" id="raid_{raids.COUNT}_boss_{raids.bosskills.BK_KEY}submit" name="raids[{raids.COUNT}][bosskills][{raids.bosskills.BK_KEY}][delete]" value="true" {raids.bosskills.DELDIS} />
+							</td>
+							<!-- IF raids.bosskills.IMPORT -->
+								<td>
+									<input type="text" id="id_raid{raids.COUNT}_boss{raids.bosskills.BK_KEY}" class="input" value="{raids.bosskills.BK_SELECT}" size="22" name="raids[{raids.COUNT}][bosskills][{raids.bosskills.BK_KEY}][id]" />
+									<i class="fa fa-plus fa-lg hand" title="{L_bz_import_boss}" onclick="javascript:{raids.bosskills.IMPORT}();">
+								</td>
+							<!-- ELSE -->
+								<td>{raids.bosskills.BK_SELECT}</td>
+							<!-- ENDIF -->
+							<td>{L_date}: {raids.bosskills.BK_DATE}</td>
+							<!-- IF USE_BOSSDKP -->
+							<td>{L_value}: <input id="bonus_raid{raids.COUNT}_boss{raids.bosskills.BK_KEY}" type="text" name="raids[{raids.COUNT}][bosskills][{raids.bosskills.BK_KEY}][bonus]" value="{raids.bosskills.BK_BONUS}" size="5" class="input" /></td>
+							<td>{L_rli_t_points}: <input id="timebonus_raid{raids.COUNT}_boss{raids.bosskills.BK_KEY}" type="text" name="raids[{raids.COUNT}][bosskills][{raids.bosskills.BK_KEY}][timebonus]" value="{raids.bosskills.BK_TIMEBONUS}" size="5" class="input" /></td>
+							<!-- ENDIF -->
+							<!-- IF L_DIFFICULTY -->
+							<td>{L_DIFFICULTY}: {raids.bosskills.BK_DIFF}</td>
+							<!-- ENDIF -->
+						</tr>
+					<!-- END bosskills -->
+					</table>
+				</td>
+			  </tr>
+			  <tr>
+				<td colspan="2">
+					<button type="button" id="raidb_{raids.COUNT}" name="add_boss_button[]" class="mainoption bi_new" value="{L_rli_add_bk}"><i class="fa fa-plus"></i> {L_rli_add_bk}</button>
+				</td>
+			  </tr>
+			</table>
+			</div>
+			<!-- END raids -->			
+			<button type="button" id="add_raid_button" class="bi_new" value="{L_rli_add_raid}"><i class="fa fa-plus"></i> {L_rli_add_raid}</button>
+			<br /><br />
+			
+			<input id="onclose_submit" type="hidden" name="checkraid" value="update" disabled="disabled" />
+			<button type="submit" name="checkraid" value="update"><i class="fa fa-refresh"></i> {L_update}</button>
+			<button type="submit" name="checkraid" value="recalc"><i class="fa fa-refresh"></i> {L_rli_calc_note_value}</button>
+			<button type="submit" name="checkmem" value="{L_rli_go_on}"><i class="fa fa-arrow-right"></i> {L_rli_go_on}</button>
+				
+		</div>
+		<div id="members">
+			<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+		</div>
+		<div id="items">
+			<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+		</div>
+		<!-- IF not S_DEACTIVATE_ADJ -->
+			<div id="adjustments">
+				<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+			</div>
+		<!-- ENDIF -->
+		<div id="viewall">
+			<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+		</div>
+		<div id="finish">
+			<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+		</div>
+	</div>
+</form>
+
+<script type="text/javascript">
+ 	function loadEventValue(event_id, key){
+ 		$.get("dkp.php{SID}", { eventvalue: "1", event: event_id }, function(data){
+			var id = "#raids_" + key + "_eventval";
+			$( id ).val(data);
+		});
+	}
+</script>

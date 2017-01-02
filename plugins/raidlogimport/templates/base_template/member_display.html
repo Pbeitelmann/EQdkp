@@ -1,0 +1,31 @@
+<table class="table fullwidth colorswitch">
+	<tr>
+		<th colspan="7">{L_members}</th>
+	</tr>
+	<tr>
+		<th width="150">{L_member}</th>
+		<th>{L_raids}</th>
+		<!-- IF S_CONF_ADJ -->
+		<th>{L_rli_t_points}</th>
+		<th>{L_rli_b_dkp}</th>
+		<!-- ENDIF -->
+		<!-- IF S_ATT_BEGIN --><th>{L_rli_start}</th><!-- ENDIF -->
+		<!-- IF S_ATT_END --><th>{L_rli_end}</th><!-- ENDIF -->
+	</tr>
+	<!-- BEGIN player -->
+	<tr>
+		<td width="150">{player.MITGLIED} {player.ALIAS}</td>
+		<td>{player.RAID_LIST}</td>
+		<!-- IF S_CONF_ADJ -->
+		<td align="right">{player.ZEITDKP}</td>
+		<td align="right">{player.BOSSDKP}</td>
+		<!-- ENDIF -->
+		<!-- IF S_ATT_BEGIN -->
+			<td align="right">{player.ATT_BEGIN}</td>
+		<!-- ENDIF -->
+		<!-- IF S_ATT_END -->
+			<td align="right">{player.ATT_END}</td>
+		<!-- ENDIF -->
+	</tr>
+<!-- END player -->
+</table>

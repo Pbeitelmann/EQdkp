@@ -1,0 +1,23 @@
+<!-- IF not S_SEND -->
+<form method="post" action="{ACTION}&amp;user={TO_USER_ID}" name="massmail">
+	<fieldset class="settings smallsettings">
+		<legend>{L_adduser_send_mail}</legend>
+		<dl>
+			<dt><label>{L_email_receiver}</label></dt>
+			<dd>{USERNAME}</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_adduser_send_mail_subject}</label></dt>
+			<dd><input name="subject" type="text" class="input" id="subject" size="65" value="{SUBJECT}"/></dd>
+		</dl>
+		<dl>
+			<dt><label>{L_adduser_send_mail_body}</label></dt>
+			<dd><textarea name="body" cols="70" rows="10" style="width:90%;">{BODY}</textarea>
+			</dd>
+		</dl>
+	</fieldset>
+	<button class="mainoption" type="submit" name="send"><i class="fa fa-check"></i>{L_adduser_send_mail}</button>
+	<button class="mainoption" type="reset" name="reset"><i class="fa fa-trash-o"></i>{L_reset}</button>
+{CSRF_TOKEN}
+</form>
+<!-- ENDIF -->

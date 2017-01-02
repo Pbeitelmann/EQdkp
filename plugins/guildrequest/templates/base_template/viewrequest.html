@@ -1,0 +1,135 @@
+<!-- IF S_EXTERNAL_USER -->
+<script>
+	$(document).ready(function(){
+		$( "<input type='hidden' name='key' value='{EXTERNAL_KEY}' />" ).appendTo( "#comment_dataext" );
+	})
+</script>
+<!-- ENDIF -->
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<!-- IF not S_EXTERNAL_USER -->
+		<li><a href="{EQDKP_CONTROLLER_PATH}Listapplications{SEO_EXTENSION}{SID}">{L_gr_view}</a></li>
+		<!-- ENDIF -->
+		<li class="current"><a>{L_gr_viewrequest}: {GR_DATE}, {GR_USERNAME}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<div class="contentHeader">
+	<h1 class="contentTitle">{L_gr_viewrequest}: {GR_DATE}, {GR_USERNAME}</h1>
+</div>
+
+	<!-- IF S_CLOSED -->
+	<div class="infobox infobox-large infobox-red clearfix">
+		<i class="fa fa-lock fa-4x pull-left"></i> {L_gr_closed}
+	</div>
+	<br />
+	<!-- ENDIF -->
+	<div class="infobox infobox-large infobox-blue clearfix">
+		<i class="fa fa-info-circle fa-4x pull-left"></i> <!-- IF S_SUCCESS_MSG -->{L_gr_request_success_msg}<a href="{EXTERNAL_URL}">{EXTERNAL_URL}</a><br /><br /><!-- ENDIF -->
+		
+		{STATUS_TEXT}
+	</div>
+	<br />
+	
+<style type="text/css">
+.bi_close{
+	background:url({EQDKP_IMAGE_PATH}/calendar/closed_s.png) no-repeat 2px center;
+	text-indent:20px;
+}
+.bi_open{
+	background:url({EQDKP_IMAGE_PATH}/calendar/open.png) no-repeat 2px center;
+	text-indent:20px;
+}
+</style>
+	
+<div id='gr_view'>
+	<ul>
+		<li><a href='#gr_request'><span>{L_gr_viewlink_subject}</span></a></li>
+		<!-- IF S_VOTE -->
+			<li><a href='#gr_vote'><span>{L_gr_vote}</span></a></li>
+		<!-- ENDIF -->
+		<!-- IF S_INTERNAL_COMMENTS -->
+			<li><a href='#gr_comments'><span>{L_gr_internal_comments} ({INTERNAL_COMMENT_COUNTER})</span></a></li>
+		<!-- ENDIF -->
+	</ul>
+	
+	<div id="gr_request">
+	<!-- IF S_IS_GR_ADMIN -->
+	<form method="post">
+		<fieldset class="settings mediumsettings">
+			<legend><span class="adminicon"></span> {L_gr_manage_request}</legend>
+			<dl>
+				<dt><label>{L_status}</label>
+				<br /><span>{L_gr_status_help}</span>
+				</dt>
+				<dd>{STATUS_DD}
+					<textarea name="gr_status_text" style="width:95%" rows="4"></textarea>
+					<br /><button type="submit" name="status_change"><i class="fa fa-check"></i>{L_gr_change_status}</button>
+				</dd>
+				
+			</dl>
+			<dl>
+				<dt><label>{L_gr_close}</label>
+				</dt>
+				<dd>
+					<!-- IF S_CLOSED -->
+						<button type="submit" name="open"><i class="fa fa-unlock"></i>{L_gr_open_request}</button>
+					<!-- ELSE -->
+						<button type="submit" name="close"><i class="fa fa-lock"></i>{L_gr_close}</button>
+					<!-- ENDIF --></dd>
+			</dl>
+		</fieldset>
+	{CSRF_TOKEN}
+	</form>
+	<!-- ENDIF -->
+	
+<!-- BEGIN tabs -->
+		<div>
+			<!-- BEGIN fieldset -->
+
+			<fieldset class="settings mediumsettings gr_{tabs.fieldset.ID}">
+				<legend>{tabs.fieldset.NAME}</legend>
+				<!-- BEGIN field -->
+				<dl id="{tabs.fieldset.field.ID}">
+					<!-- IF tabs.fieldset.field.S_NO_DIVIDER -->
+					{tabs.fieldset.field.NAME}
+					<!-- ELSE -->
+					<dt><label>{tabs.fieldset.field.NAME} <!-- IF tabs.fieldset.field.REQUIRED -->*<!-- ENDIF --></label>
+					<!-- <br /><span>{tabs.fieldset.field.HELP}</span> -->
+					</dt>
+					<dd>{tabs.fieldset.field.FIELD}</dd>
+					<!-- ENDIF -->
+				</dl>
+				<!-- END field -->
+			</fieldset>
+			
+
+			<!-- END fieldset -->
+		</div>
+		<!-- END tabs -->
+		
+		{COMMENTS}
+	</div>
+	
+	<!-- IF S_VOTE -->
+	<div id="gr_vote">
+		<form method="post">
+		<div><!-- IF not S_HAS_VOTED --><div style="float:left;"><input type="radio" value="yes" name="gr_vote" /></div><!-- ENDIF --><div style="width:90%; float: left; margin-left: 20px; margin-bottom: 20px;">{VOTE_YES}</div></div>
+		<div class="clear"></div>
+		<div><!-- IF not S_HAS_VOTED --><div style="float:left;"><input type="radio" value="no" name="gr_vote" /></div><!-- ENDIF --><div style="width:90%; float: left; margin-left: 20px; margin-bottom: 20px;">{VOTE_NO}</div></div>
+		<div class="clear"></div>
+		<!-- IF not S_HAS_VOTED -->
+		{CSRF_TOKEN}
+		<button type="submit" name="vote"><i class="fa fa-check-square-o"></i>{L_gr_vote_button}</button>
+		<!-- ENDIF -->
+		</form>
+	</div>
+	<!-- ENDIF -->
+	
+	<!-- IF S_INTERNAL_COMMENTS -->
+	<div id="gr_comments">
+		{INTERNAL_COMMENTS}
+	</div>
+	<!-- ENDIF -->
+</div>

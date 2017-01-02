@@ -1,0 +1,75 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li><a href="{EQDKP_ROOT_PATH}plugins/guildbank/admin/manage_banker.php{SID}">{L_gb_manage_bankers}</a></li>
+		<li class="current"><a>{L_BC_CURRENTPAGE}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<div>
+	<div class="raidcal_name floatLeft">
+		<span class="fa-stack fa-lg">
+		  <i class="fa fa-square fa-stack-2x"></i>
+		  <i class="fa fa-university fa-stack-1x fa-inverse"></i>
+		</span> {BANKNAME}
+	</div>
+	<div class="floatRight">{MENU_OPTIONS}</div>
+</div>
+<div class="clear"></div>
+<br/>
+<form method="post" action="{ACTION}" name="post">
+	<div id='guildbank_tab'>
+		<ul>
+			<li><a href='#fragment-items'><span>{L_gb_tab_items}</span></a></li>
+			<li><a href='#fragment-transactions'><span>{L_gb_tab_transactions}</span></a></li>
+		</ul>
+
+		<div id="fragment-items">
+			<div class="contentHeader">
+				<h1 class="contentTitle">{L_gb_title_item}</h1>
+			</div>
+			<div class="tableHeader floatRight">
+					<button class="mainoption" type="button" name="payoutitem" onclick="javascript:payout_item();"><i class="fa fa-shopping-cart"></i>{L_gb_payout_item}</button>
+					<button class="mainoption" type="button" name="additem" onclick="javascript:add_item();"><i class="fa fa-plus"></i>{L_add_item}</button>
+			</div>
+			<div class="clear"></div>
+
+			<table class="table fullwidth colorswitch">
+				{ITEM_LIST}
+			</table>
+
+			<div class="center pagination_wrapper">
+				{PAGINATION_ITEMS}
+			</div>
+			<div class="contentFooter">
+				<button class="mainoption" type="button" name="del" onclick="delete_warning();"><i class="fa fa-times"></i>{L_delete_selected_items}</button>
+				<input type="hidden" name="del" value="1" disabled="disabled" id="mass_del_submit" />
+			</div>
+		</div>
+
+		<div id="fragment-transactions">
+			<div class="contentHeader">
+				<h1 class="contentTitle">{L_gb_title_transaction}</h1>
+			</div>
+			<div class="tableHeader floatRight">
+					<button class="mainoption" type="button" name="addtransaction" onclick="javascript:add_transaction();"><i class="fa fa-plus"></i>{L_add_transaction}</button>
+			</div>
+			<div class="clear"></div>
+
+			<table class="table fullwidth colorswitch">
+				{TRANSA_LIST}
+			</table>
+
+			<div class="center pagination_wrapper">
+				{TRANSA_PAGINATION}
+			</div>
+			<div class="contentFooter">
+				<button class="mainoption" type="button" name="del" onclick="delete_warning();"><i class="fa fa-times"></i>{L_delete_selected_items}</button>
+				<input type="hidden" name="del_transaction" value="1" disabled="disabled" id="mass_del_submit_transaction" />
+			</div>
+		</div>
+	</div>
+{CSRF_TOKEN}
+</form>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings styleversion="0.2.0">	
+	<template_path>eqdkp_legion</template_path>
+	<attendees_columns>6</attendees_columns>
+	<logo_position>left</logo_position>
+	<background_type>0</background_type>
+	<background_img></background_img>
+	<background_pos>normal</background_pos>
+	<column_right_width>0px</column_right_width>
+	<column_left_width>0px</column_left_width>
+	<portal_width>0px</portal_width>
+	
+	<body_background_color>rgb(16, 8, 5)</body_background_color>
+	<body_font_color>rgb(247, 250, 229)</body_font_color>
+	<body_font_size>15</body_font_size>
+	<body_font_family>'Metallophile', 'Trebuchet MS', Helvetica, sans-serif</body_font_family>
+	<body_link_color>rgb(19, 255, 41)</body_link_color>
+	<body_link_color_hover>rgb(255, 255, 255)</body_link_color_hover>
+	<body_link_decoration>none</body_link_decoration>
+	
+	<container_background_color></container_background_color>
+	<container_border_color></container_border_color>
+	<content_background_color></content_background_color>
+	<content_font_color></content_font_color>
+	<content_font_color_headings></content_font_color_headings>
+	<content_link_color></content_link_color>
+	<content_link_color_hover></content_link_color_hover>
+	<content_border_color></content_border_color>
+	<content_accent_color></content_accent_color>
+	<content_contrast_color>rgb(247, 250, 229)</content_contrast_color>
+	<content_contrast_background_color>rgba(19, 255, 41, 0.1)</content_contrast_background_color>
+	<content_contrast_border_color>rgba(19, 255, 41, 0.2)</content_contrast_border_color>
+	<content_positive_color>rgb(51, 204, 51)</content_positive_color>
+	<content_negative_color>rgb(226, 59, 48)</content_negative_color>
+	<content_neutral_color>rgb(153, 153, 153)</content_neutral_color>
+	<content_highlight_color></content_highlight_color>
+	
+	<userarea_background_color>rgba(0, 0, 0, 0)</userarea_background_color>
+	<userarea_font_color>rgb(0, 0, 0)</userarea_font_color>
+	<userarea_link_color>rgb(0, 0, 0)</userarea_link_color>
+	<userarea_link_color_hover>rgb(19, 255, 41)</userarea_link_color_hover>
+	
+	<table_th_background_color>rgb(102, 102, 102)</table_th_background_color>
+	<table_th_font_color>rgb(255, 255, 255)</table_th_font_color>
+	<table_tr_font_color></table_tr_font_color>
+	<table_tr_background_color1></table_tr_background_color1>
+	<table_tr_background_color2></table_tr_background_color2>
+	<table_tr_background_color_hover></table_tr_background_color_hover>
+	<table_border_color>rgb(170, 170, 170)</table_border_color>
+	
+	<menu_background_color></menu_background_color>
+	<menu_font_color>rgb(0, 0, 0)</menu_font_color>
+	<menu_item_background_color></menu_item_background_color>
+	<menu_item_background_color_hover></menu_item_background_color_hover>
+	<menu_item_font_color_hover>rgb(232, 227, 97)</menu_item_font_color_hover>
+	
+	<sidebar_background_color>rgba(132, 255, 0, 0.15)</sidebar_background_color>
+	<sidebar_font_color>rgb(247, 250, 229)</sidebar_font_color>
+	<sidebar_border_color>rgb(102, 102, 102)</sidebar_border_color>
+	
+	<button_background_color>rgb(19, 255, 41)</button_background_color>
+	<button_font_color>rgb(51, 51, 51)</button_font_color>
+	<button_border_color>rgb(0, 147, 14)</button_border_color>
+	<button_background_color_hover>rgb(0, 147, 14)</button_background_color_hover>
+	<button_font_color_hover>rgb(0, 0, 0)</button_font_color_hover>
+	<button_border_color_hover>rgb(19, 255, 41)</button_border_color_hover>
+	
+	<input_background_color></input_background_color>
+	<input_border_color></input_border_color>
+	<input_font_color></input_font_color>
+	<input_background_color_active></input_background_color_active>
+	<input_border_color_active></input_border_color_active>
+	<input_font_color_active></input_font_color_active>
+	
+	<misc_color1></misc_color1>
+	<misc_color2></misc_color2>
+	<misc_color3></misc_color3>
+	<misc_text1></misc_text1>
+	<misc_text2></misc_text2>
+	<misc_text3></misc_text3>
+	<additional_less></additional_less>
+</settings>

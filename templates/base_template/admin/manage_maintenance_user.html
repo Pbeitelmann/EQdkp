@@ -1,0 +1,70 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_maintenanceuser_user}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<div class="infobox infobox-large infobox-blue clearfix">
+	<i class="fa fa-info-circle fa-4x pull-left"></i> {L_maintenanceuser_info}
+</div>
+<div class="infobox infobox-large infobox-red clearfix">
+	<i class="fa fa-exclamation-triangle fa-4x pull-left"></i> {L_maintenanceuser_warning}
+</div>
+<br />
+<form action="{ACTION}" method="post">
+
+<!-- IF not USER_ACTIVE -->
+<fieldset class="settings smallsettings">
+<legend>{L_maintenanceuser_create}</legend>
+<dl>
+	<dt>
+		<label>{L_maintenanceuser_valid}:</label><br />
+	</dt>
+	<dd>
+		{DAY_DROPDOWN} {L_days}
+	</dd>
+</dl>
+</fieldset>
+<button class="mainoption" name="create" type="submit" id="create"><i class=""></i>{L_maintenanceuser_create}</button>
+<!-- ELSE -->
+<fieldset class="settings smallsettings">
+<legend>{L_maintenanceuser_user}</legend>
+<dl>
+	<dt>
+		<label>{L_infos}:</label><br />
+	</dt>
+	<dd>
+		<textarea cols="50" rows="4" onclick="this.form.data.select()" name="data" readonly="readonly">{USER_DATA}</textarea>
+	</dd>
+</dl>
+</fieldset>
+<button class="mainoption" name="del" type="submit"><i class="fa fa-times"></i>{L_maintenanceuser_delete}</button>
+<button class="mainoption" name="renew" type="submit" id="renew"><i class="fa fa-repeat"></i>{L_maintenanceuser_renew}</button>
+<br /><br />
+<fieldset class="settings smallsettings">
+<legend>{L_maintenanceuser_send}</legend>
+<dl>
+	<dt>
+		<label>{L_email_address}:</label><br />
+	</dt>
+	<dd>
+		<input name="email" type="text" id="email" size="30" class="input"/>
+	</dd>
+</dl>
+<dl>
+	<dt>
+		<label>{L_email_confirm}:</label><br />
+	</dt>
+	<dd>
+		<input name="email_repeat" type="text" id="email_repeat" size="30" class="input" />
+	</dd>
+</dl>
+</fieldset>
+<button class="mainoption" type="submit" name="email_submit"><i class="fa fa-envelope"></i>{L_maintenanceuser_send_mail}</button>
+
+<!-- ENDIF -->
+{CSRF_TOKEN}
+</form>

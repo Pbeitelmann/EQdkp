@@ -1,0 +1,68 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		{BREADCRUMB}
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<section data-category-id="{CATEGORY_ID}">
+	<!-- IF not S_HIDE_HEADER -->
+	<header>
+		<hgroup class="contentHeader">
+			<h1 class="contentTitle">{CATEGORY_NAME}
+			<!-- IF S_TOOLBAR --> 
+				<div class="floatRight">
+					<div class="toolbar-button">
+						<span class="{ARTICLE_TOOLBAR} toolbar"><i class="fa fa-cog"></i></span>
+					</div>
+				</div>
+			<!-- ENDIF -->
+			<div class="floatRight normal-fontsize">
+				<a href="{RSSLINK}" title="{L_rsslink}" class="rsslink"><i class="fa fa-rss"></i></a>
+				<a href="{PERMALINK}" title="{L_permalink}" class="permalink"><i class="fa fa-link"></i></a>
+			</div>
+			</h1>
+		</hgroup>
+		<!-- IF S_CHILDS -->
+		<div class="categoryChildSitemap">
+			<ul>
+				<!-- BEGIN child_row -->
+				<li><a href="{child_row.U_PATH}" title="{child_row.DESC} "><i class="fa fa-folder fa-lg"></i> {child_row.NAME} ({child_row.COUNT})</a></li>
+				<!-- END child_row -->
+			</ul>
+		</div>
+		<!-- ENDIF -->
+		{CATEGORY_DESCRIPTION}
+		<div class="clear"></div>
+	</header>
+	<!-- ELSEIF S_CHILDS -->
+	<header class="noheader">
+		<div class="categoryChildSitemap">
+			<ul>
+				<!-- BEGIN child_row -->
+				<li><a href="{child_row.U_PATH}" title="{child_row.DESC} "><i class="fa fa-folder fa-lg"></i> {child_row.NAME} ({child_row.COUNT})</a></li>
+				<!-- END child_row -->
+			</ul>
+		</div>
+		<div class="clear"></div>
+	</header>
+	<!-- ENDIF -->
+
+
+
+	<div class="article-container-wrapper">
+		<!-- IF LIST_TYPE == 1 -->
+			<!-- INCLUDE category_list_type1.html -->
+		<!-- ENDIF -->
+
+		<!-- IF LIST_TYPE == 2 -->
+			<!-- INCLUDE category_list_type2.html -->
+		<!-- ENDIF -->
+
+		<!-- IF LIST_TYPE == 3 -->
+			<!-- INCLUDE category_list_type3.html -->
+		<!-- ENDIF -->
+		{PAGINATION}
+	</div>
+</section>

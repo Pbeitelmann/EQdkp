@@ -1,0 +1,31 @@
+<form method="post" action="{ACTION}" name="addWC">
+<input type="hidden" name="banker" value="{BANKERID}">
+
+<fieldset class="settings smallsettings">
+	<legend id="header_name">{L_gb_ta_head_payout}</legend>
+	<dl class="item">
+		<dt><label>{L_item_name}:</label></dt>
+		<dd>
+			{DD_ITEMS}
+		</dd>
+	</dl>
+	<dl>
+		<dt><label>{L_gb_members}:</label></dt>
+		<dd>{DD_CHARS}</dd>
+	</dl>
+	<dl class="item">
+		<dt><label>{L_gb_amount}:</label></dt>
+		<dd><input type="text" name="amount" size="5" value="{AMOUNT}" class="input" /></dd>
+	</dl>
+	<dl>
+		<dt><label>{L_gb_item_value_money}:</label></dt>
+		<dd>{MONEY}</dd>
+	</dl>
+	<dl class="item">
+		<dt><label>{L_gb_dkp}:</label></dt>
+		<dd><input type="text" name="dkp" size="5" value="{DKP}" class="input" /></dd>
+	</dl>
+</fieldset>
+<button class="mainoption" type="submit" name="perform_payout"><i class="fa fa-shopping-cart"></i>{L_gb_payout_button}</button>
+{CSRF_TOKEN}
+</form>

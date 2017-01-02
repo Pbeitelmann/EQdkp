@@ -1,0 +1,169 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	$( "#dialog-new-layout" ).dialog({
+		height: 310,
+		width: 500,
+		modal: true,
+		autoOpen: false,
+	});
+	
+	$("#newLayoutTrigger").on('click', function(){
+		$( "#dialog-new-layout" ).dialog('open');
+	});
+});
+</script>
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_page_manager}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<form method="post" action="{ACTION}" name="post">
+<div id="lm_tabs">
+	<ul>
+		<li><a href="#normal">{L_lm_manage_layouts}</a></li>
+		<li><a href="#advanced">{L_lm_manage_advanced}</a></li>
+	</ul>
+	<div id="normal">
+		<div class="contentHeader">
+			<h1 class="contentTitle">{L_lm_manage_layouts}</h1>
+		</div>
+		<div class="infobox infobox-large infobox-blue clearfix">
+			<i class="fa fa-info-circle fa-4x pull-left"></i> {L_lm_info}
+		</div>
+		<br/><br/>
+		<table class="table fullwidth colorswitch hoverrows">
+			<tr>
+				<th colspan="4">{L_lm_default_layouts}</th>
+			</tr>
+			<tr>
+				<th width="1%">&nbsp;</th>
+				<th width="1%">{L_action}</th>
+				<th width="15%">{L_name}</th>
+				<th>{L_description}</th>
+			</tr>
+			<!-- BEGIN layouts_row -->
+			<tr>
+				<td><input type="radio" name="current_layout" value="{layouts_row.NAME}" {layouts_row.IS_CURRENT} /></td>
+				<td width="20" class="nowrap">
+					<a href="manage_pagelayouts.php{SID}&amp;edit=true&amp;layout={layouts_row.NAME}" title="{L_edit}"><i class="fa fa-pencil fa-lg" title="{L_edit}"></i></a>
+				</td>
+				<td>{layouts_row.NAME}</td>
+				<td>{layouts_row.DESC}</td>
+				
+			</tr>
+			<!-- END layouts_row -->
+			<tr>
+				<th colspan="4">{L_lm_user_layouts}</th>
+			</tr>
+			<!-- BEGIN user_layouts_row -->
+			<tr>
+				<td><input type="radio" name="current_layout" value="{user_layouts_row.NAME}" {user_layouts_row.IS_CURRENT} /></td>
+				<td width="20" class="nowrap">
+					<a href="manage_pagelayouts.php{SID}&amp;edit=true&amp;layout={user_layouts_row.NAME}" title="{L_edit}"><i class="fa fa-pencil fa-lg" title="{L_edit}"></i></a> &nbsp;
+					<a href="manage_pagelayouts.php{SID}&amp;del=true&amp;layout={user_layouts_row.NAME}&amp;link_hash={CSRF_DEL_TOKEN}" title="{L_delete}"> <i class="fa fa-trash-o fa-lg" title="{L_delete}"></i></a>
+				</td>
+				<td><a href="manage_pagelayouts.php{SID}&amp;edit=true&amp;layout={user_layouts_row.NAME}">{user_layouts_row.NAME}</a></td>
+				<td width="84%">{user_layouts_row.DESC}</td>
+			</tr>
+			<!-- END user_layouts_row -->
+		</table>
+		<br />
+		<button type="submit" name="set_current_layout" class="mainoption"><i class="fa fa-check"></i>{L_lm_make_current}</button>
+		<button type="button" name="add_layout" class="mainoption" id="newLayoutTrigger"><i class="fa fa-plus"></i>{L_lm_new_layout}</button>
+				
+	</div>
+	<div id="advanced">
+		<div class="infobox infobox-large infobox-red clearfix">
+			<i class="fa fa-exclamation-triangle fa-4x pull-left"></i> {L_lm_warning}
+		</div>
+		<div class="tableHeader">
+			<h2>{L_lm_user_presets}</h2>
+		</div>
+		<table class="table fullwidth colorswitch">
+			<tr>
+				<th>{L_action}</th>
+				<th>{L_name}</th>
+				
+				<th>{L_lm_module}</th>
+				<th>{L_lm_tag}</th>
+				<th>{L_lm_aparam}</th>
+				<th>{L_lm_dparam}</th>			
+			</tr>
+			<!-- BEGIN preset_row -->
+			<tr>
+				<td width="20" align="center"><a href="manage_pagelayouts.php{SID}&amp;del_pre={preset_row.NAME}&amp;link_hash={CSRF_DELPRESET_TOKEN}" title="{L_delete}"><i class="fa fa-trash-o fa-lg" title="{L_delete}"></i></a></td>
+				<td>{preset_row.NAME}</td>
+				<td>{preset_row.MODULE}</td>
+				<td>{preset_row.TAG}</td>
+				<td>{preset_row.APARAM}</td>
+				<td>{preset_row.DPARAM}</td>
+			</tr>
+			<!-- END preset_row -->
+		</table>
+		<br />
+		<fieldset class="settings smallsettings">
+		<legend>{L_lm_add_preset}</legend>
+		<dl>
+			<dt><label>{L_lm_module}: </label></dt>
+			<dd>{PDH_R_DD}</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_lm_tag}: </label></dt>
+			<dd>{PDH_METHODS_DD}</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_lm_lang}: </label></dt>
+			<dd><input type="text" name="lang" value="" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_lm_aparam}: </label></dt>
+			<dd><!-- BEGIN param_row -->
+				<!-- IF param_row.IS_OPTIONAL -->(<!-- ENDIF -->
+					{param_row.NAME}: <input type="text" name="param[]" value="{param_row.DEFAULT}" />
+					<!-- IF param_row.IS_OPTIONAL -->)<!-- ENDIF --><br />			
+				<!-- END param_row -->
+			</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_lm_dparam}: </label></dt>
+			<dd><!-- BEGIN caption_row -->
+				<!-- IF caption_row.IS_OPTIONAL -->(<!-- ENDIF -->
+					{caption_row.NAME}: <input type="text" name="caption[]" value="{caption_row.DEFAULT}" />
+					<!-- IF caption_row.IS_OPTIONAL -->)<!-- ENDIF --><br />			
+				<!-- END caption_row -->
+			</dd>
+		</dl>
+		</fieldset>
+		{PDH_R_OLD}
+		<button name="add_preset" type="submit" class="mainoption" id="add_preset"><i class="fa fa-check"></i>{L_lm_add_preset}</button>
+	</div>
+</div>
+{CSRF_TOKEN}
+</form>
+
+<div id="dialog-new-layout" title="{L_lm_new_layout}">
+	<form method="post" action="{ACTION}" name="post">
+		<fieldset class="settings mediumsettings">
+		<legend>{L_lm_new_layout}</legend>
+		<dl>
+			<dt><label>{L_name}: *</label></dt>
+			<dd><input name="new_layout_name" type="text" maxlength="30" style="width:90%"/></dd>
+		</dl>
+		<dl>
+			<dt><label>{L_description}: *</label></dt>
+			<dd><input name="new_layout_desc" type="text" maxlength="80" style="width:90%"/></dd>
+		</dl>
+		<dl>
+			<dt><label>{L_lm_source_layout}:</label></dt>
+			<dd>{LAYOUT_DROPDOWN}</dd>
+		</dl>
+		</fieldset>
+		<button class="mainoption" type="submit" name="add_layout"><i class="fa fa-check"></i>{L_lm_new_layout}</button>
+	{CSRF_TOKEN}
+	</form>
+</div>

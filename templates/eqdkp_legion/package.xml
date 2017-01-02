@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install type="template" version="2.2.0.0">
+	<name>EQdkp Legion</name>
+	<author>Asitara</author>
+	<authorEmail></authorEmail>
+	<authorUrl>http://eqdkp-plus.eu</authorUrl>
+	<creationDate>2013-01-12T10:26:19+00:00</creationDate>
+	<copyright>Asitara</copyright>
+	<license>AGPL v3</license>
+	<version>0.2.0</version>
+	<description></description>
+	<folder>eqdkp_legion</folder>
+</install>

@@ -1,0 +1,76 @@
+<script type='text/javascript'>
+//<![CDATA[
+$(document).ready(function() {
+	$('#selectmode').change(function() {
+		if($(this).val() == '1'){
+			$('dl.transaction').show();
+			$('dl.item').hide();
+			$('#header_name').text({L_gb_ta_head_transaction|jsencode});
+		}else{
+			$('dl.transaction').hide();
+			$('dl.item').show();
+			$('#header_name').text({L_gb_ta_head_item|jsencode});
+		}
+	}).trigger('change');
+});
+</script>
+
+<form method="post" action="{ACTION}" name="addWC">
+<input type="hidden" name="banker" value="{BANKERID}">
+<input type="hidden" name="item" value="{ITEMID}">
+<input type="hidden" name="transaction" value="{TAID}">
+<input type="hidden" name="editmode" value="{EDITMODE}">
+<input type="hidden" name="mode" value="{MODE}">
+
+<fieldset class="settings mediumsettings">
+	<legend id="header_name">{L_gb_ta_head_item}</legend>
+	<dl>
+		<dt><label>{L_gb_mode}:</label></dt>
+		<dd>{DD_MODE}</dd>
+	</dl>
+	<dl class="item">
+		<dt><label>{L_item_name}:</label></dt>
+		<dd>
+			{ITEM}
+		</dd>
+	</dl>
+	<dl class="transaction">
+		<dt><label>{L_gb_subject}:</label></dt>
+		<dd>
+			<input type="text" name="subject" size="20" value="{V_SUBJECT}" class="input" />
+		</dd>
+	</dl>
+	<dl class="item">
+		<dt><label>{L_gb_rarity}:</label></dt>
+		<dd>{DD_RARITY}</dd>
+	</dl>
+	<dl class="item">
+		<dt><label>{L_gb_type}:</label></dt>
+		<dd>{DD_TYPE}</dd>
+	</dl>
+	<dl class="item">
+		<dt><label>{L_gb_amount}:</label></dt>
+		<dd><input type="text" name="amount" size="5" value="{AMOUNT}" class="input" /></dd>
+	</dl>
+	<dl class="transaction">
+		<dt><label>{L_gb_money}:</label></dt>
+		<dd>{MONEY_TRANS}</dd>
+	</dl>
+	<dl class="item">
+		<dt><label>{L_gb_itemvalue}:</label></dt>
+		<dd>{MONEY_ITEM}</dd>
+	</dl>
+	<dl class="item">
+		<dt><label>{L_gb_dkp}:</label></dt>
+		<dd><input type="text" name="dkp" size="5" value="{DKP}" class="input" /></dd>
+	</dl>
+	<dl class="item">
+		<dt><label>{L_gb_item_sellable}:</label></dt>
+		<dd>{R_SELLABLE}</dd>
+	</dl>
+</fieldset>
+<button class="mainoption" type="submit" name="save">
+	<i class="fa fa-check"></i> <!-- IF S_TRANSACT -->{L_gb_addtrans_button}<!-- ELSE -->{L_gb_additem_button}<!-- ENDIF -->
+</button>
+{CSRF_TOKEN}
+</form>

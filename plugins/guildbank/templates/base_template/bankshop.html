@@ -1,0 +1,81 @@
+<!-- IF not SHOWMESSAGE -->
+<!-- IF NOSELECTION -->
+<script type='text/javascript'>
+$(document).ready(function() {
+	$('#amount').change(function(){
+		var amount			= $(this).val();
+		if($('#currencyselector').val() == 'dkp'){
+			var dkpvalue		= $('#dkpvalue').data('value');
+			var new_value		= dkpvalue*amount;
+			$('#dkpvalue').val(new_value);
+		}else{
+			$('.money').each(function() {
+				var moneyvalue		= $(this).data('value');
+				var new_value		= moneyvalue*amount;
+				$(this).val(new_value);
+			});
+			var moneyvalue		= $('#dkpvalue').data('value');
+			
+		}
+	}).trigger('change');
+});
+</script>
+<!-- ENDIF -->
+<div>
+	<div class="raidcal_name floatLeft">
+		<span class="fa-stack fa-lg">
+		  <i class="fa fa-square fa-stack-2x"></i>
+		  <i class="fa fa-shopping-cart fa-stack-1x fa-inverse"></i>
+		</span> {L_gb_shop}</div>
+	<div class="floatRight">{MENU_OPTIONS}</div>
+</div>
+<div class="clear"></div>
+<form method="post" action="{ACTION}" name="addWC">
+<input type="hidden" name="banker" value="{BANKERID}">
+
+<fieldset class="settings mediumsettings">
+	<dl class="item">
+		<dt><label>{L_gb_item_name}:</label></dt>
+		<dd>
+			<!-- IF NOSELECTION -->{ITEM}<input type="hidden" name="item" value="{ITEM_ID}"><!-- ELSE -->{DD_ITEMS}<!-- ENDIF -->
+		</dd>
+	</dl>
+	<dl>
+		<dt><label>{L_gb_members}:</label></dt>
+		<dd>{DD_MYCHARS}</dd>
+	</dl>
+	<!-- IF BUYFORMONEY -->
+	<dl>
+		<dt><label>{L_gb_itemcost}:</label></dt>
+		<dd>{MONEY}
+			<input type="hidden" name="currency" id="currencyselector" value="cash">
+		</dd>
+	</dl>
+	<!-- ELSE -->
+	<dl>
+		<dt><label>{L_gb_dkppool}:</label></dt>
+		<dd>{DD_MULTIDKPPOOL}</dd>
+	</dl>
+	<!-- ENDIF -->
+	<dl class="item">
+		<dt><label>{L_gb_amount}:</label></dt>
+		<dd>{DD_AMOUNT}</dd>
+	</dl>
+	<!-- IF not BUYFORMONEY -->
+	<dl class="item">
+		<dt><label>{L_gb_dkp}:</label></dt>
+		<dd>
+			<input type="text" name="costs" size="5" id="dkpvalue" value="{DKP}" data-value="{DKP}" class="input" <!-- IF NOSELECTION -->readonly="readonly"<!-- ENDIF -->/>
+			<input type="hidden" name="currency" id="currencyselector" value="dkp">
+		</dd>
+	</dl>
+	<!-- ENDIF -->
+</fieldset>
+<button class="mainoption" type="submit" name="save"><i class="fa fa-shopping-cart"></i> {L_gb_shop_buy}</button>
+{CSRF_TOKEN}
+</form>
+<!-- ELSE -->
+<div class="infobox infobox-large infobox-{MSGCOLOR} clearfix">
+	<i class="fa {MSGICON} fa-4x pull-left"></i> {MSGTEXT}
+</div>
+<!-- ENDIF -->

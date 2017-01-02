@@ -1,0 +1,57 @@
+<!-- IF S_NORMAL_HEADER -->
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li><a href="{EQDKP_ROOT_PATH}plugins/raidlogimport/admin/bz.php{SID}">{L_raidlogimport}: {L_rli_bz_bz}</a>
+		<li class="current"><a>{L_bz_upd}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<!-- ENDIF -->
+	<div class="contentHeader">
+		<h1 class="contentTitle">{L_bz_upd}</h1>
+	</div>
+
+<form method="post" action="{ACTION}" id="form_rli_bz">
+    <table class="table fullwidth colorswitch">
+      <tr>
+      	<th>{L_bz_type}</th><th>{L_bz_string}</th><th>{L_bz_note_event}</th><th>{L_bz_timebonus}</th><th>{L_bz_bonus}</th><!-- IF S_DIFF --><th>{L_difficulty}</th><!-- ENDIF --><th>{L_bz_tozone}</th><th>{L_bz_sort}</th>
+      </tr>
+      <!-- BEGIN upd_list -->
+      <tr>
+      	<td><select name="type[{upd_list.ID}]" id="type_{upd_list.ID}" class="boss_zone_type">
+      		<option value="boss" {upd_list.BSELECTED}>{L_bz_boss_s}</option>
+      		<option value="zone" {upd_list.ZSELECTED}>{L_bz_zone_s}</option>
+      		</select>
+      	</td>
+      	<td><input type="text" name="string[{upd_list.ID}]" value="{upd_list.STRING}" /></td>
+      	<td><!-- IF S_BOSSEVENT -->{upd_list.EVENTS}<!-- ELSE -->
+				<div id="event_{upd_list.ID}" class="<!-- IF upd_list.ZSELECTED -->bz_show<!-- ELSE -->bz_hide<!-- ENDIF -->">{upd_list.EVENTS}</div>
+				<div id="note_{upd_list.ID}" class="<!-- IF upd_list.BSELECTED -->bz_show<!-- ELSE -->bz_hide<!-- ENDIF -->">
+					<input type="text" name="note[{upd_list.ID}]" value="{upd_list.NOTE}" />
+				</div>
+			<!-- ENDIF -->
+		</td>
+      	<td align="center"><input type="text" name="timebonus[{upd_list.ID}]" value="{upd_list.TIMEBONUS}" size="5" /></td>
+		<td>
+			<div id="bonus_{upd_list.ID}" class="<!-- IF upd_list.ZSELECTED -->bz_hide<!-- ELSE -->bz_show<!-- ENDIF -->">
+				<input type="text" name="bonus[{upd_list.ID}]" value="{upd_list.BONUS}" size="5" />
+			</div>
+		</td>
+		<!-- IF S_DIFF --><td>{upd_list.DIFF_ARRAY}</td><!-- ENDIF -->
+      	<td>
+			<div id="tozone_{upd_list.ID}" class="<!-- IF upd_list.ZSELECTED -->bz_hide<!-- ELSE -->bz_show<!-- ENDIF -->">
+				{upd_list.ZONE_ARRAY}
+			</div>
+		</td>
+      	<td align="center"><input type="text" name="sort[{upd_list.ID}]" value="{upd_list.SORT}" size="5" /></td>
+      </tr>
+      <!-- END upd_list -->
+    </table>
+    
+    <div class="contentFooter">
+		<button class="mainoption" type="submit" name="save" value="{L_save}" class="mainoption"><i class="fa fa-check"></i> {L_save}</button>
+	</div>
+{CSRF_TOKEN}
+</form>

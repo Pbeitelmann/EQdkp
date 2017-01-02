@@ -1,0 +1,70 @@
+<tr>
+	<th style="width:45px;">&nbsp;</th>
+	<th style="max-width:300px;">{L_name}</th>
+	<th width="{PXTIME}"><span style="float:left;">{L_raids}</span><span id="dt_help" style="float:right;" title="{L_rli_help}"><i class="fa fa-lg fa-question-circle"></i></span></th>
+</tr>
+<!-- BEGIN player -->
+<tr id="memberrow_{player.KEY}" {player.DISPLAY}>
+	<td align="right" class="nowrap">
+		{player.NR}&nbsp;<i class="fa fa-trash-o fa-lg hand" title="{L_delete}" onclick="delete_warning('memberrow_{player.KEY}');"></i>
+		<input type="hidden" id="memberrow_{player.KEY}submit" name="members[{player.KEY}][delete]" value="true" {player.DELDIS} />
+	</td>
+	<td><input type="text" name="members[{player.KEY}][name]" value="{player.MITGLIED}" class="input" /></td>
+	<td id="member_{player.KEY}" class="add_time" onmouseover="set_member('{player.KEY}', '{PXTIME}');" style="height: {HEIGHT}px;">
+		<!-- BEGIN member_raids -->
+		<div id="raid_{player.KEY}_{player.member_raids.KEY}" class="raid {player.member_raids.RPOS} {player.member_raids.ACTIVE}" style="width: {player.member_raids.WIDTH}px; margin-left: {player.member_raids.LEFT}px;">
+			<div class="raid_left"></div>
+			<div class="raid_middle">
+				<input type="hidden" name="members[{player.KEY}][raid_list][]" value="{player.member_raids.KEY}" {player.member_raids.DISABLED} />
+			</div>
+			<div class="raid_right"> </div>
+		</div>
+		<!-- END member_raids -->
+		<!-- BEGIN bosses -->
+		<div id="boss_{player.KEY}_{player.bosses.KEY}" class="rli_boss" style="margin-left: {player.bosses.LEFT}px;">
+			<div class="rli_boss_c" style="display: none;">
+				<table class="table fullwidth">
+					<tr>
+						<td>{L_rli_bossname}</td>
+						<td>{player.bosses.NAME}</td>
+					</tr>
+					<tr>
+						<td>{L_rli_bosstime}</td>
+						<td>{player.bosses.TIME}</td>
+					</tr>
+					<tr>
+						<td>{L_rli_bossvalue}</td>
+						<td>{player.bosses.VALUE}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<!-- END bosses -->
+		<div id="times_{player.KEY}">
+		<!-- BEGIN times -->
+			<div id="times_{player.KEY}_{player.times.KEY}" class="time{player.times.STANDBY}" style="width: {player.times.WIDTH}px; margin-left: {player.times.LEFT}px;" onmouseover="set_time_key(this.id);">
+				<div class="time_left" onmousedown="scale_start('left')"></div><div></div>
+				<div class="time_middle" onmousedown="scale_start('middle')">
+					<input type="hidden" name="members[{player.KEY}][times][{player.times.KEY}][join]" value="{player.times.JOIN}" id="times_{player.KEY}_{player.times.KEY}j" />
+					<input type="hidden" name="members[{player.KEY}][times][{player.times.KEY}][leave]" value="{player.times.LEAVE}" id="times_{player.KEY}_{player.times.KEY}l" />
+					<input type="hidden" name="members[{player.KEY}][times][{player.times.KEY}][extra]" value="{player.times.EXTRA}" id="times_{player.KEY}_{player.times.KEY}s" />
+				</div>
+				<div class="time_right" onmousedown="scale_start('right')"></div><div></div>
+			</div>
+		<!-- END times -->
+			<div style="display:none;">
+				<div id="times_{player.KEY}_99" class="time" style="width:0px; margin-left:0px;" onmouseover="set_time_key(this.id)">
+					<div class="time_left" onmousedown="scale_start('left')"></div><div></div>
+					<div class="time_middle" onmousedown="scale_start('middle')">
+						<input type="hidden" name="members[{player.KEY}][times][99][join]" value="0" id="times_{player.KEY}_99j" disabled="disabled" />
+						<input type="hidden" name="members[{player.KEY}][times][99][leave]" value="0" id="times_{player.KEY}_99l" disabled="disabled" />
+						<input type="hidden" name="members[{player.KEY}][times][99][extra]" value="0" id="times_{player.KEY}_99s" disabled="disabled" />
+					</div>
+					<div class="time_right" onmousedown="scale_start('right')"></div><div></div>
+				</div>
+			</div>
+			<div id="time_scale_{player.KEY}" class="time_scale_hide"></div>
+		</div>
+	</td>
+</tr>
+<!-- END player -->

@@ -1,0 +1,930 @@
+<script type="text/javascript">
+//<![CDATA[
+var totalSteps = 4;
+var locked = false;
+var updateWarning = <!-- IF S_HIDE_UPDATEWARNING -->false<!-- ELSE -->true<!-- ENDIF -->;
+
+$(function() {
+	$("#nl_progressbar").progressbar({
+		value: 0
+	});
+});
+
+function set_progress_bar_value(recentNumber, labeltext){
+	percent = Math.round((recentNumber / totalSteps) * 100);
+	$("#nl_progressbar").progressbar("destroy");
+
+	$("#nl_progressbar").progressbar({
+		value: percent
+	});
+	
+	$("#nl_progressbar_label").html(labeltext);
+}
+
+function update_error(data){
+	locked = false;
+	
+	$("#lu_error").show();
+	$("#lu_error_label").html("<b>"+{L_liveupdate_step_error|jsencode}+"</b>" + data);
+	$("#lu_loading_img").hide();
+}
+
+function repo_update(extid, cat, extensioncode){
+	if (locked){
+		alert({L_extension_install_locked|jsencode});
+		return false;
+	}
+	
+	locked = true;
+	
+	if(updateWarning){
+		if (cat != 2) {
+			update_confirm(extid, cat, extensioncode);
+		} else {
+			repo_update_start(extid, cat, extensioncode);
+		}
+	} else {
+		repo_update_start(extid, cat, extensioncode);
+	}
+}
+
+function repo_update_start(extid, cat, extensioncode){	
+	locked = true;
+	
+	$("#lu_error").hide();
+	$("#nl_progressbar").show();
+	$("#lu_loading_img").show();
+
+	repo_step1(extid, cat, extensioncode, 'update');
+}
+
+function repo_install(extid, cat, extensioncode){
+	if (locked){
+		alert({L_extension_install_locked|jsencode});
+		return false;
+	}
+	locked = true;
+	
+	$("#lu_error").hide();
+	$("#nl_progressbar").show();
+	$("#lu_loading_img").show();
+
+	repo_step1(extid, cat, extensioncode, 'install');
+}
+
+function repo_step1(extid, cat, extensioncode, mode){
+	set_progress_bar_value(0, {L_repo_step1|jsencode}+'...');
+	$.get('manage_extensions.php{SID}&step=1&cat='+cat+'&code='+extensioncode+'&extid='+extid, function(data) {
+		  if ($.trim(data) == 'true'){
+			repo_step2(extid, cat, extensioncode, mode);
+		  } else {
+			update_error(data);
+		  }
+	}).fail(function(){
+		update_error('Error 500');
+	});
+}
+
+function repo_step2(extid, cat, extensioncode, mode){
+	set_progress_bar_value(1, {L_repo_step2|jsencode}+'...');
+	$.get('manage_extensions.php{SID}&step=2&cat='+cat+'&code='+extensioncode+'&extid='+extid, function(data) {
+		  if ($.trim(data) == 'true'){
+			repo_step3(extid, cat, extensioncode, mode);
+		  } else {
+			update_error(data);
+		  }
+	}).fail(function(){
+		update_error('Error 500');
+	});
+}
+
+function repo_step3(extid, cat, extensioncode, mode){
+	set_progress_bar_value(2, {L_repo_step3|jsencode}+'...');
+	$.get('manage_extensions.php{SID}&step=3&cat='+cat+'&code='+extensioncode+'&extid='+extid, function(data) {
+		  if ($.trim(data) == 'true'){
+			repo_step4(extid, cat, extensioncode, mode);
+		  } else {
+			update_error(data);
+		  }
+	}).fail(function(){
+		update_error('Error 500');
+	});
+}
+
+function repo_step4(extid, cat, extensioncode, mode){
+	set_progress_bar_value(3, {L_repo_step4|jsencode}+'...');
+	$.get('manage_extensions.php{SID}&step=4&cat='+cat+'&code='+extensioncode+'&extid='+extid, function(data) {
+		  if ($.trim(data) == 'true'){
+			repo_step5(extid, cat, extensioncode, mode);
+		  } else {
+			update_error(data);
+		  }
+	}).fail(function(){
+		update_error('Error 500');
+	});
+}
+
+function repo_step5(extid, cat, extensioncode, mode){
+	var url = 'manage_extensions.php{SID}&mode='+mode+'&cat='+cat+'&code='+extensioncode+'&extid='+extid+'&link_hash={CSRF_MODE_TOKEN}{ME_URL_SUFFIX}';
+	if(auto_update){
+		url = url + "&autoupd=1&current="+auto_current+"&{ME_URL_SUFFIX}try="+auto_try;
+	}
+	window.location=url;
+	return;	
+}
+
+function hide_update_warning(status){
+	var hide = (status) ? 1 : 0;
+	if (hide) updateWarning = false;
+	$.get('manage_extensions.php{SID}&hide_update_warning=true&hide='+hide+'&link_hash={CSRF_UPDATEWARNING_TOKEN}');
+}
+
+var auto_update = <!-- IF AUTOUPD_ON --> true<!-- ELSE --> false<!-- ENDIF -->;
+var auto_current = {AUTOUPD_CURRENT};
+var auto_try = {AUTOUPD_TRY};
+var updates = new Array();
+
+function init_auto_update(){	
+	$('.needs_update').each(function(){
+		var cat = $(this).data('category');
+		var id = $(this).data('id');
+		if(cat != "2"){
+			updates.push(id);
+		}
+	})
+	updates.sort();
+	if(updates.length){
+		$('.update-all-btn').show();
+	} else {
+		$('.update-all-btn').hide();
+	}
+}
+
+function start_auto_update(){
+	$('.update-all-btn').hide();
+	
+	//get first to update
+	if(updates.length > 0){
+		var myid = updates[0];
+		var myobj = $("a[data-id='"+myid+"']");
+		var mycat = $(myobj).data('category');
+		var mycode = $(myobj).data('code');
+
+		if (locked){
+			alert({L_extension_install_locked|jsencode});
+			return false;
+		}
+		
+		auto_update = 1;
+		auto_current = myid;
+		auto_try = 0;
+		repo_update_start(myid, mycat, mycode);
+	}
+}
+
+function continue_auto_update(){
+	$('.update-all-btn').hide();
+	
+	if(updates.length > 0){
+		var myid = false;
+		
+		$.each(updates, function( index, value ) {
+		 	if(value >= auto_current){
+		 		myid = updates[index];
+		 		return false;
+		 	}
+		});
+		
+		if(!myid){
+			console.log("finished");
+			return;
+		}
+
+		var myobj = $("a[data-id='"+myid+"']");
+		var mycat = $(myobj).data('category');
+		var mycode = $(myobj).data('code');
+		
+		console.log(myid);
+		
+		if(auto_current == myid){
+			console.log(auto_try);
+			if(auto_try > 2){
+				//Too much tries, find next one;
+				myid = false;
+				$.each(updates, function( index, value ) {
+				 	if(value > auto_current){
+				 		myid = updates[index];
+				 		return false;
+				 	}
+				});
+				console.log(myid);
+				if(myid){
+					myobj = $("a[data-id='"+myid+"']");
+					mycat = $(myobj).data('category');
+					mycode = $(myobj).data('code');
+					
+					auto_try = 0;
+					auto_current = myid;
+					repo_update_start(myid, mycat, mycode);
+					
+				} else {
+					console.log("finished");
+					return;
+				}
+				
+			} else {
+				auto_try = auto_try + 1;
+				repo_update_start(myid, mycat, mycode);
+			}
+			
+		} else {
+			auto_try = 0;
+			auto_current = myid;
+			
+			repo_update_start(myid, mycat, mycode);
+		}
+		
+	} else {
+		console.log("finished");
+	}
+}
+
+$(document).ready(function(){
+	init_auto_update();
+	
+	<!-- IF AUTOUPD_ON -->
+	continue_auto_update();
+	<!-- ENDIF -->
+});
+//]]>
+</script>
+<!-- IF S_NORMAL_HEADER -->
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a href="{EQDKP_ROOT_PATH}admin/manage_extensions.php{SID}">{L_extension_repo}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<!-- ENDIF -->
+<div class="infobox infobox-large infobox-red clearfix" id="lu_error" style="display:none;">
+	<i class="fa fa-exclamation-triangle fa-4x pull-left"></i> <span id="lu_error_label"></span>
+</div>
+
+<div id="nl_progressbar" style="display:none; margin-bottom: 20px; height: 30px;">
+	<span class="nl_progressbar_label"><i class="fa fa-spinner fa-spin fa-lg" id="lu_loading_img"></i> &nbsp;<span id="nl_progressbar_label">{L_liveupdate}...</span></span>
+</div>
+<!-- IF S_NORMAL_HEADER -->
+<div class="floatRight">
+	<button type="button" class="update-all-btn mainoption" onclick="start_auto_update();" ><i class="fa fa-refresh"></i> {L_update_all_extensions}</button>
+</div>
+<div class="clear"></div>
+<!-- ENDIF -->
+<div id='plus_plugins_tab'>
+	<!-- IF S_SHOW_TABS -->
+	<ul>
+		<li><a href='#fragment-1'><span><i class="fa fa-cogs"></i> {L_CATEGORY_1}</span>{BADGE_1}</a></li>
+		<li><a href='#fragment-2'><span><i class="fa fa-paint-brush"></i> {L_CATEGORY_2}</span>{BADGE_2}</a></li>
+		<li><a href='#fragment-3'><span><i class="fa fa-columns"></i> {L_CATEGORY_3}</span>{BADGE_3}</a></li>
+		<li><a href='#fragment-7'><span><i class="fa fa-gamepad"></i> {L_CATEGORY_7}</span>{BADGE_7}</a></li>
+		<li><a href='#fragment-11'><span><i class="fa fa-globe"></i> {L_CATEGORY_11}</span>{BADGE_11}</a></li>
+		<li><a href='#fragment-upload'><span><i class="fa fa-upload"></i> {L_pi_manualupload}</span></a></li>
+	</ul>
+	<!-- ENDIF -->
+	<!-- IF S_SHOW_CAT_1 -->
+	<div id="fragment-1">
+		<div class="contentHeader">
+			<h1 class="contentTitle">{L_CATEGORY_1}</h1>
+		</div>
+	
+		<table class="table fullwidth colorswitch">
+		<tr>
+			<th class="left" style="width:20px">&nbsp;</th>
+			<th class="left" style="width:16px">{L_action}</th>
+			<th class="left">{L_name}</th>
+			<th colspan="{DEP_COUNT}" class="hiddenSmartphone left">{L_plug_dep_title}</th>
+			<th class="left">{L_version}</th>
+			<th class="hiddenSmartphone left">{L_portalplugin_author}</th>
+			<th class="hiddenSmartphone left">{L_description}</th>
+			<th class="hiddenSmartphone left">{L_infos}</th>
+		</tr>
+		<!-- BEGIN plugins_row_red -->
+		<tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-red"></i></td>
+			<td class="nowrap desktopOnly">{plugins_row_red.ACTION_LINK}</td>
+			<td>{plugins_row_red.NAME}</td>
+			<!-- BEGIN dep_row -->
+			<td class="hiddenSmartphone">
+				<span class="coretip" data-coretip="{plugins_row_red.dep_row.DEPENDENCY_TT}">
+					<i class="{plugins_row_red.dep_row.ICON}"></i> {plugins_row_red.dep_row.DEPENDENCY_NAME}
+				</span>
+			</td>
+			<!-- END dep_row -->
+			<td>{plugins_row_red.VERSION}</td>
+			<td class="hiddenSmartphone">{plugins_row_red.CONTACT}</td>
+			<td class="hiddenSmartphone">{plugins_row_red.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">
+				<i class="coretip fa fa-info-circle fa-lg" data-coretip="{plugins_row_red.DESCRIPTION}"></i>
+				<!-- IF plugins_row_red.HOMEPAGE_LINK -->
+				<span class="coretip" data-coretip="{plugins_row_red.HOMEPAGE}"><a href="{plugins_row_red.HOMEPAGE_LINK}" target="_blank" rel="nofollow"><i class="fa fa-globe fa-lg"></i></a></span>
+				<!-- ENDIF -->
+				<!-- IF plugins_row_red.MANUAL_LINK -->
+				<span class="coretip" data-coretip="{plugins_row_red.MANUAL}"><a href="{plugins_row_red.MANUAL_LINK}" target="_blank" rel="nofollow"><i class="fa fa-question-circle fa-lg"></i></a></span>
+				<!-- ENDIF -->
+				<!-- IF plugins_row_red.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{plugins_row_red.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		</tr>
+		<!-- END plugins_row_red -->
+		<!-- BEGIN plugins_row_yellow -->
+		<tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-yellow"></i></td>
+			<td class="nowrap desktopOnly">{plugins_row_yellow.ACTION_LINK}</td>
+			<td>{plugins_row_yellow.NAME}</td>
+			<!-- BEGIN dep_row -->
+			<td class="hiddenSmartphone">
+				<span class="coretip" data-coretip="{plugins_row_yellow.dep_row.DEPENDENCY_TT}">
+					<i class="{plugins_row_yellow.dep_row.ICON}"></i> {plugins_row_yellow.dep_row.DEPENDENCY_NAME}
+				</span>
+			</td>
+			<!-- END dep_row -->
+			<td>{plugins_row_yellow.VERSION}</td>
+			<td class="hiddenSmartphone">{plugins_row_yellow.CONTACT}</td>
+			<td class="hiddenSmartphone">{plugins_row_yellow.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">
+				<i class="coretip fa fa-info-circle fa-lg" data-coretip="{plugins_row_yellow.DESCRIPTION}"></i>
+				<!-- IF plugins_row_yellow.HOMEPAGE_LINK -->
+				<span class="coretip" data-coretip="{plugins_row_yellow.HOMEPAGE}"><a href="{plugins_row_yellow.HOMEPAGE_LINK}" target="_blank" rel="nofollow"><i class="fa fa-globe fa-lg"></i></a></span>
+				<!-- ENDIF -->
+				<!-- IF plugins_row_yellow.MANUAL_LINK -->
+				<span class="coretip" data-coretip="{plugins_row_yellow.MANUAL}"><a href="{plugins_row_yellow.MANUAL_LINK}" target="_blank" rel="nofollow"><i class="fa fa-question-circle fa-lg"></i></a></span>
+				<!-- ENDIF -->
+				<!-- IF plugins_row_yellow.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{plugins_row_yellow.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		</tr>
+		<!-- END plugins_row_yellow -->
+		<!-- BEGIN plugins_row_green -->
+		<tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-green"></i></td>
+			<td class="nowrap desktopOnly">{plugins_row_green.ACTION_LINK}</td>
+			<td>{plugins_row_green.NAME}</td>
+			<!-- BEGIN dep_row -->
+			<td class="hiddenSmartphone">
+				<span class="coretip" data-coretip="{plugins_row_green.dep_row.DEPENDENCY_TT}">
+					<i class="{plugins_row_green.dep_row.ICON}"></i> {plugins_row_green.dep_row.DEPENDENCY_NAME}
+				</span>
+			</td>
+			<!-- END dep_row -->
+			<td>{plugins_row_green.VERSION}</td>
+			<td class="hiddenSmartphone">{plugins_row_green.CONTACT}</td>
+			<td class="hiddenSmartphone">{plugins_row_green.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">
+				<i class="coretip fa fa-info-circle fa-lg" data-coretip="{plugins_row_green.DESCRIPTION}"></i>
+				<!-- IF plugins_row_green.HOMEPAGE_LINK -->
+				<span class="coretip" data-coretip="{plugins_row_green.HOMEPAGE}"><a href="{plugins_row_green.HOMEPAGE_LINK}" target="_blank" rel="nofollow"><i class="fa fa-globe fa-lg"></i></a></span>
+				<!-- ENDIF -->
+				<!-- IF plugins_row_green.MANUAL_LINK -->
+				<span class="coretip" data-coretip="{plugins_row_green.MANUAL}"><a href="{plugins_row_green.MANUAL_LINK}" target="_blank" rel="nofollow"><i class="fa fa-question-circle fa-lg"></i></a></span>
+				<!-- ENDIF -->
+				<!-- IF plugins_row_green.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{plugins_row_green.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		</tr>
+		<!-- END plugins_row_green -->
+		<!-- BEGIN plugins_row_grey -->
+		<tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-gray"></i></td>
+			<td class="nowrap desktopOnly">{plugins_row_grey.ACTION_LINK}</td>
+			<td>{plugins_row_grey.NAME}</td>
+			<!-- BEGIN dep_row -->
+			<td class="hiddenSmartphone">
+				<span class="coretip" data-coretip="{plugins_row_grey.dep_row.DEPENDENCY_TT}">
+					<i class="{plugins_row_grey.dep_row.ICON}"></i> {plugins_row_grey.dep_row.DEPENDENCY_NAME}
+				</span>
+			</td>
+			<!-- END dep_row -->
+			<td>{plugins_row_grey.VERSION}</td>
+			<td class="hiddenSmartphone">{plugins_row_grey.CONTACT}</td>
+			<td class="hiddenSmartphone">{plugins_row_grey.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">
+				<i class="coretip fa fa-info-circle fa-lg" data-coretip="{plugins_row_grey.DESCRIPTION}"></i>
+				<!-- IF plugins_row_grey.HOMEPAGE_LINK -->
+				<span class="coretip" data-coretip="{plugins_row_grey.HOMEPAGE}"><a href="{plugins_row_grey.HOMEPAGE_LINK}" target="_blank" rel="nofollow"><i class="fa fa-globe fa-lg"></i></a></span>
+				<!-- ENDIF -->
+				<!-- IF plugins_row_grey.MANUAL_LINK -->
+				<span class="coretip" data-coretip="{plugins_row_grey.MANUAL}"><a href="{plugins_row_grey.MANUAL_LINK}" target="_blank" rel="nofollow"><i class="fa fa-question-circle fa-lg"></i></a></span>
+				<!-- ENDIF -->
+				<!-- IF plugins_row_grey.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{plugins_row_grey.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		</tr>
+		<!-- END plugins_row_grey -->
+		<!-- BEGIN plugins_row_grey_repo -->
+		<tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-gray"></i></td>
+			<td class="nowrap desktopOnly">{plugins_row_grey_repo.ACTION_LINK}</td>
+			<td>{plugins_row_grey_repo.NAME}</td>
+			<!-- BEGIN dep_row -->
+			<td class="hiddenSmartphone">
+				<span class="coretip" data-coretip="{plugins_row_grey_repo.dep_row.DEPENDENCY_TT}">
+					<i class="{plugins_row_grey_repo.dep_row.ICON}"></i> {plugins_row_grey_repo.dep_row.DEPENDENCY_NAME}
+				</span>
+			</td>
+			<!-- END dep_row -->
+			<td>{plugins_row_grey_repo.VERSION}</td>
+			<td class="hiddenSmartphone">{plugins_row_grey_repo.CONTACT}</td>
+			<td class="hiddenSmartphone">{plugins_row_grey_repo.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">
+				<i class="coretip fa fa-info-circle fa-lg" data-coretip="{plugins_row_grey_repo.DESCRIPTION}"></i>
+				<!-- IF plugins_row_grey_repo.HOMEPAGE_LINK -->
+				<span class="coretip" data-coretip="{plugins_row_grey_repo.HOMEPAGE}"><a href="{plugins_row_grey_repo.HOMEPAGE_LINK}" target="_blank" rel="nofollow"><i class="fa fa-globe fa-lg"></i></a></span>
+				<!-- ENDIF -->
+				<!-- IF plugins_row_grey_repo.MANUAL_LINK -->
+				<span class="coretip" data-coretip="{plugins_row_grey_repo.MANUAL}"><a href="{plugins_row_grey_repo.MANUAL_LINK}" target="_blank" rel="nofollow"><i class="fa fa-question-circle fa-lg"></i></a></span>
+				<!-- ENDIF -->
+				<!-- IF plugins_row_grey_repo.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{plugins_row_grey_repo.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		</tr>
+		<!-- END plugins_row_grey_repo -->
+		<!-- BEGIN plugins_row_broken -->
+		<tr>
+			 <td style="width:20px" class="center"></td>
+			<td><!-- IF plugins_row_broken.DELETE --><a href="{plugins_row_broken.DEL_LINK}" title="{L_delete_plugin}"><i class="fa fa-exclamation-triangle fa-fw"></i>&nbsp;{L_delete}</a><!-- ENDIF -->&nbsp;</td>
+			<td colspan="20">{plugins_row_broken.NAME}: {L_broken_plugin}</td>
+		</tr>
+		<!-- END plugins_row_broken -->
+		</table>
+	</div>
+	<!-- ENDIF -->
+
+	<!-- IF S_SHOW_CAT_2 -->
+	<div id="fragment-2">
+		<div class="contentHeader">
+			<h1 class="contentTitle">{L_CATEGORY_2}</h1>
+		</div>
+		<script type="text/javascript" language="javascript">
+
+		var override = 0;
+		function change_override(value){
+			override = value;
+		}
+
+		function submit_form(){
+			document.post.override.value = override;
+			document.post.submit();
+		}
+		</script>
+		
+		<form method="post" action="{ACTION}&amp;cat=2&amp;mode=default_style" name="post">
+		<input type="hidden" name="override" value="0" />
+		<ul class="styles-container">
+			<!-- BEGIN styles_row_red_local -->
+			<li class="style {styles_row_red_local.ROWNAME}">
+				<div class="style-action">
+					<div class="style-checkbox">
+						<!-- IF not styles_row_red_local.S_DEACTIVATED -->
+						<input id="style-radio{styles_row_red_local.ID}" type="radio" name="standard_style" {styles_row_red_local.STANDARD} value="{styles_row_red_local.ID}" />
+						<label for="style-radio{styles_row_red_local.ID}"></label>
+						<!-- ENDIF -->
+					</div>
+					{styles_row_red_local.ACTION_LINK}
+					<!-- IF not styles_row_red_local.S_DEFAULT -->
+					<a href="{styles_row_red_local.U_ENABLE}" title="{styles_row_red_local.L_ENABLE}"><i class="{styles_row_red_local.ENABLE} fa-lg"></i></a>  
+					<!-- ENDIF -->
+					<a href="{styles_row_red_local.U_DOWNLOAD_STYLE}" title="{L_download_style}"><i class="fa fa-floppy-o fa-lg"></i></a>
+					<a href="javascript:style_reset_warning({styles_row_red_local.ID})" title="{L_reset_style}"><i class="fa fa-retweet fa-lg"></i></a>	
+					<a href="javascript:style_preview({styles_row_red_local.ID});" title="{L_preview}"><i class="fa fa-eye fa-lg"></i></a>
+				</div>
+				<a class="style-preview" href="{styles_row_red_local.U_EDIT_STYLE}" <!-- IF styles_row_red_local.TT_CONTENT != "" -->style="background: url({styles_row_red_local.TT_CONTENT}) no-repeat; background-size: cover; background-position: center;"<!-- ENDIF -->></a>
+				<div class="style-info">
+					<h2>{styles_row_red_local.TT_NAME} <span class="style-version"><i class="fa fa-tags" title="{L_version}"></i> {styles_row_red_local.VERSION}</span></h2>
+					<table>
+					<tr>
+						<td><i class="fa fa-folder-open" title="{L_template_files}"></i> {styles_row_red_local.TEMPLATE}</td>
+						<td><i class="fa fa-pencil" title="{L_portalplugin_author}"></i> {styles_row_red_local.AUTHOR}</td>
+					</tr><tr>
+						<td><i class="fa fa-group" title="{L_users}"></i> {styles_row_red_local.USERS}</td>
+						<td></td>
+					</tr>
+					</table>
+				</div>
+			</li>
+			<!-- END styles_row_red_local -->
+			<!-- BEGIN styles_row_red -->
+			<li class="style {styles_row_red.ROWNAME}">
+				<div class="style-action">
+					<div class="style-checkbox">
+						<!-- IF not styles_row_red.S_DEACTIVATED -->
+						<input id="style-radio{styles_row_red.ID}" type="radio" name="standard_style" {styles_row_red.STANDARD} value="{styles_row_red.ID}" />
+						<label for="style-radio{styles_row_red.ID}"></label>
+						<!-- ENDIF -->
+					</div>
+				
+					{styles_row_red.ACTION_LINK}
+					<!-- IF not styles_row_red.S_DEFAULT -->
+					<a href="{styles_row_red.U_ENABLE}" title="{styles_row_red.L_ENABLE}"><i class="{styles_row_red.ENABLE} fa-lg"></i></a>  
+					<!-- ENDIF -->
+					<a href="{styles_row_red.U_DOWNLOAD_STYLE}" title="{L_download_style}"><i class="fa fa-floppy-o fa-lg"></i></a>
+					<a href="javascript:style_reset_warning({styles_row_red.ID})" title="{L_reset_style}"><i class="fa fa-retweet fa-lg"></i></a>	
+					<a href="javascript:style_preview({styles_row_red.ID});" title="{L_preview}"><i class="fa fa-eye fa-lg"></i></a>
+				</div>
+				<a class="style-preview" href="{styles_row_red.U_EDIT_STYLE}" <!-- IF styles_row_red.TT_CONTENT != "" -->style="background: url({styles_row_red.TT_CONTENT}) no-repeat; background-size: cover; background-position: center;"<!-- ENDIF -->></a>
+				<div class="style-info">
+					<h2>{styles_row_red.TT_NAME} <span class="style-version"><i class="fa fa-tags" title="{L_version}"></i> {styles_row_red.VERSION}</span></h2>
+					<table>
+					<tr>
+						<td><i class="fa fa-folder-open" title="{L_template_files}"></i> {styles_row_red.TEMPLATE}</td>
+						<td><i class="fa fa-pencil" title="{L_portalplugin_author}"></i> {styles_row_red.AUTHOR}</td>
+					</tr><tr>
+						<td><i class="fa fa-group" title="{L_users}"></i> {styles_row_red.USERS}</td>
+						<td></td>
+					</tr>
+					</table>
+				</div>
+			</li>
+			<!-- END styles_row_red -->
+			<!-- BEGIN styles_row_yellow -->
+			<li class="style {styles_row_yellow.ROWNAME}">
+				<div class="style-action">
+					<div class="style-checkbox">
+						<!-- IF not styles_row_yellow.S_DEACTIVATED -->
+						<input id="style-radio{styles_row_yellow.ID}" type="radio" name="standard_style" {styles_row_yellow.STANDARD} value="{styles_row_yellow.ID}" />
+						<label for="style-radio{styles_row_yellow.ID}"></label>
+						<!-- ENDIF -->
+					</div>
+				
+					{styles_row_yellow.ACTION_LINK}
+					<!-- IF not styles_row_yellow.S_DEFAULT -->
+					<a href="{styles_row_yellow.U_ENABLE}" title="{styles_row_yellow.L_ENABLE}"><i class="{styles_row_yellow.ENABLE} fa-lg"></i></a>  
+					<!-- ENDIF -->
+					<a href="{styles_row_yellow.U_DOWNLOAD_STYLE}" title="{L_download_style}"><i class="fa fa-floppy-o fa-lg"></i></a>
+					<a href="javascript:style_reset_warning({styles_row_yellow.ID})" title="{L_reset_style}"><i class="fa fa-retweet fa-lg"></i></a>	
+					<a href="javascript:style_preview({styles_row_yellow.ID});" title="{L_preview}"><i class="fa fa-eye fa-lg"></i></a>
+				</div>
+				<a class="style-preview" href="{styles_row_yellow.U_EDIT_STYLE}" title="{L_uc_bttn_update}" <!-- IF styles_row_yellow.TT_CONTENT != "" -->style="background: url({styles_row_yellow.TT_CONTENT}) no-repeat; background-size: cover; background-position: center;"<!-- ENDIF -->></a>
+			
+				<div class="style-info">
+					<h2>{styles_row_yellow.TT_NAME}<span class="style-version"><i class="fa fa-tags" title="{L_version}"></i> {styles_row_yellow.VERSION}</span></h2>
+					<table>
+					<tr>
+						<td><i class="fa fa-folder-open" title="{L_template_files}"></i> {styles_row_yellow.TEMPLATE}</td>
+						<td><i class="fa fa-pencil" title="{L_portalplugin_author}"></i> {styles_row_yellow.AUTHOR}</td>
+					</tr><tr>
+						<td><i class="fa fa-group" title="{L_users}"></i> {styles_row_yellow.USERS}</td>
+						<td></td>
+					</tr>
+					</table>
+				</div>
+			</li>
+			<!-- END styles_row_yellow -->
+			<!-- BEGIN styles_row_green -->
+			<li class="style {styles_row_green.ROWNAME}">
+				<div class="style-action">
+					<div class="style-checkbox">
+						<!-- IF not styles_row_green.S_DEACTIVATED -->
+						<input id="style-radio{styles_row_green.ID}" type="radio" name="standard_style" {styles_row_green.STANDARD} value="{styles_row_green.ID}" />
+						<label for="style-radio{styles_row_green.ID}"></label>
+						<!-- ENDIF -->
+					</div>
+				
+					{styles_row_green.ACTION_LINK}
+					<!-- IF not styles_row_green.S_DEFAULT -->
+					<a href="{styles_row_green.U_ENABLE}" title="{styles_row_green.L_ENABLE}"><i class="{styles_row_green.ENABLE} fa-lg"></i></a>  
+					<!-- ENDIF -->
+					<a href="{styles_row_green.U_DOWNLOAD_STYLE}" title="{L_download_style}"><i class="fa fa-floppy-o fa-lg"></i></a>
+					<a href="javascript:style_reset_warning({styles_row_green.ID})" title="{L_reset_style}"><i class="fa fa-retweet fa-lg"></i></a>	
+					<a href="javascript:style_preview({styles_row_green.ID});" title="{L_preview}"><i class="fa fa-eye fa-lg"></i></a>
+				</div>
+				<a class="style-preview" title="{L_edit_style}" href="{styles_row_green.U_EDIT_STYLE}" <!-- IF styles_row_green.TT_CONTENT != "" -->style="background: url({styles_row_green.TT_CONTENT}) no-repeat; background-size: cover; background-position: center;"<!-- ENDIF -->></a>
+			
+				<div class="style-info">
+					<h2>{styles_row_green.TT_NAME}<span class="style-version"><i class="fa fa-tags" title="{L_version}"></i> {styles_row_green.VERSION}</span></h2>
+					<table>
+					<tr>
+						<td><i class="fa fa-folder-open" title="{L_template_files}"></i> {styles_row_green.TEMPLATE}</td>
+						<td><i class="fa fa-pencil" title="{L_portalplugin_author}"></i> {styles_row_green.AUTHOR}</td>
+					</tr><tr>
+						<td><i class="fa fa-group" title="{L_users}"></i> {styles_row_green.USERS}</td>
+						<td></td>
+					</tr>
+					</table>
+				</div>
+			</li>
+			<!-- END styles_row_green -->
+			<!-- BEGIN styles_row_grey -->
+			<li class="style {styles_row_grey.ROWNAME}">
+				<div class="style-action">
+					{styles_row_grey.ACTION_LINK}
+				</div>
+				<div class="style-preview" <!-- IF styles_row_grey.TT_CONTENT != "" -->style="background: url({styles_row_grey.TT_CONTENT}) no-repeat; background-size: cover; background-position: center;"<!-- ENDIF -->></div>
+				<div class="style-info">
+					<h2>{styles_row_grey.TT_NAME}<span class="style-version"><i class="fa fa-tags" title="{L_version}"></i> {styles_row_grey.VERSION}</span></h2>
+					<table>
+					<tr>
+						<td><i class="fa fa-folder-open" title="{L_template_files}"></i> {styles_row_grey.TEMPLATE}</td>
+						<td><i class="fa fa-pencil" title="{L_portalplugin_author}"></i> {styles_row_grey.AUTHOR}</td>
+					</tr><tr>
+						<td><i class="fa fa-group" title="{L_users}"></i> 0</td>
+						<td></td>
+					</tr>
+					</table>
+				</div>
+			</li>
+			<!-- END styles_row_grey -->
+		</ul>
+		<div class="clear"></div>
+		
+		<div class="contentFooter">
+			<button name="standard" type="button" id="standard" class="mainoption" onclick="style_default_info();"><i class="fa fa-check"></i>{L_make_default_style}</button>
+			<button name="cache_reset" type="button" class="liteoption" onclick="window.location='manage_extensions.php{SID}&amp;cat=2&amp;mode=delete_cache&amp;link_hash={CSRF_MODE_TOKEN}'"><i class="fa fa-trash-o"></i>{L_delete_template_cache}</button>
+		</div>
+		{CSRF_TOKEN}
+		</form>
+	</div>
+	<!-- ENDIF -->
+
+	<!-- IF S_SHOW_CAT_3 -->
+	<div id="fragment-3">
+		<!-- IF S_NORMAL_HEADER -->
+		<div class="tableHeader floatRight">
+			<button class="mainoption" type="button" name="addadj" onclick="window.location='manage_portal.php{SID}'"><i class="fa fa-columns"></i> {L_portalplugin_management}</button>
+		</div>
+		<!-- ENDIF -->
+		<div class="contentHeader">
+			<h1 class="contentTitle">{L_CATEGORY_3}</h1>
+		</div>
+		<table class="table fullwidth colorswitch">
+		  <tr>
+			<th class="left" style="width:20px">&nbsp;</th>
+			<th class="left" style="width:16px" colspan="3">{L_action}</th>
+			<th class="left">{L_name}</th>
+			<th class="left">{L_version}</th>
+			<th class="hiddenSmartphone left">{L_contact}</th>
+			<th class="hiddenSmartphone left">{L_description}</th>
+			<th style="width: 90px" class="hiddenSmartphone left">{L_pi_rating}</th>
+			<th class="hiddenSmartphone left">{L_infos}</th>
+		  </tr>
+		  <!-- BEGIN pm_row_red -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-red"></i></td>
+			<td class="nowrap desktopOnly">{pm_row_red.ACTION_LINK}</td>
+			<td class="nowrap desktopOnly">{pm_row_red.REINSTALL_LINK}</td>
+			<td class="nowrap desktopOnly">{pm_row_red.DELETE_LINK}</td>
+			<td>{pm_row_red.NAME}</td>
+			<td>{pm_row_red.VERSION}</td>
+			<td class="hiddenSmartphone">{pm_row_red.CONTACT}</td>
+			<td class="hiddenSmartphone">{pm_row_red.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">{pm_row_red.RATING}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF pm_row_red.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{pm_row_red.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END pm_row_red -->
+		  <!-- BEGIN pm_row_yellow -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-yellow"></i></td>
+			<td class="nowrap desktopOnly">{pm_row_yellow.ACTION_LINK}</td>
+			<td class="nowrap desktopOnly">{pm_row_yellow.REINSTALL_LINK}</td>
+			<td class="nowrap desktopOnly">{pm_row_yellow.DELETE_LINK}</td>
+			<td>{pm_row_yellow.NAME}</td>
+			<td>{pm_row_yellow.VERSION}</td>
+			<td class="hiddenSmartphone">{pm_row_yellow.CONTACT}</td>
+			<td class="hiddenSmartphone">{pm_row_yellow.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">{pm_row_yellow.RATING}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF pm_row_yellow.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{pm_row_yellow.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END pm_row_yellow -->
+		  <!-- BEGIN pm_row_green -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-green"></i></td>
+			<td class="nowrap desktopOnly">{pm_row_green.ACTION_LINK}</td>
+			<td class="nowrap desktopOnly">{pm_row_green.REINSTALL_LINK}</td>
+			<td class="nowrap desktopOnly">{pm_row_green.DELETE_LINK}</td>
+			<td>{pm_row_green.NAME}</td>
+			<td>{pm_row_green.VERSION}</td>
+			<td class="hiddenSmartphone">{pm_row_green.CONTACT}</td>
+			<td class="hiddenSmartphone">{pm_row_green.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">{pm_row_green.RATING}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF pm_row_green.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{pm_row_green.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END pm_row_green -->
+		  <!-- BEGIN pm_row_grey -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-gray"></i></td>
+			<td class="nowrap desktopOnly">{pm_row_grey.ACTION_LINK}</td>
+			<td class="nowrap desktopOnly">{pm_row_grey.REINSTALL_LINK}</td>
+			<td class="nowrap desktopOnly">{pm_row_grey.DELETE_LINK}</td>
+			<td>{pm_row_grey.NAME}</td>
+			<td>{pm_row_grey.VERSION}</td>
+			<td class="hiddenSmartphone">{pm_row_grey.CONTACT}</td>
+			<td class="hiddenSmartphone">{pm_row_grey.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">{pm_row_grey.RATING}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF pm_row_grey.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{pm_row_grey.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END pm_row_grey -->
+		</table>
+	</div>
+	<!-- ENDIF -->
+
+	<!-- IF S_SHOW_CAT_7 -->
+	<div id="fragment-7">
+		<div class="tableHeader floatRight">
+			<button class="mainoption" type="button" name="addadj" onclick="window.location='manage_settings.php{SID}#fragment-game'"><i class="fa fa-wrench"></i> {L_core_sett_fs_game}</button>
+		</div>
+		<div class="contentHeader">
+			<h1 class="contentTitle">{L_CATEGORY_7}</h1>
+		</div>
+		<table class="table fullwidth colorswitch">
+		  <tr>
+			<th class="left" style="width:20px">&nbsp;</th>
+			<th class="left" style="width:16px" colspan="2">{L_action}</th>
+			<th class="left">{L_name}</th>
+			<th class="left">{L_version}</th>
+			<th class="hiddenSmartphone left">{L_contact}</th>
+			<th class="hiddenSmartphone left">{L_description}</th>
+			<th style="width: 90px" class="hiddenSmartphone left">{L_pi_rating}</th>
+			<th class="hiddenSmartphone left">{L_infos}</th>
+		  </tr>
+		  <!-- BEGIN games_row_red -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-red"></i></td>
+			<td class="nowrap desktopOnly">{games_row_red.ACTION_LINK}</td>
+			<td class="nowrap desktopOnly">{games_row_red.DELETE_LINK}</td>
+			<td>{games_row_red.NAME}</td>
+			<td>{games_row_red.VERSION}</td>
+			<td class="hiddenSmartphone">{games_row_red.CONTACT}</td>
+			<td class="hiddenSmartphone">{games_row_red.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">{games_row_red.RATING}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF games_row_red.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{games_row_red.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END games_row_red -->
+		  <!-- BEGIN games_row_yellow -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-yellow"></i></td>
+			<td class="nowrap desktopOnly">{games_row_yellow.ACTION_LINK}</td>
+			<td class="nowrap desktopOnly">{games_row_yellow.DELETE_LINK}</td>
+			<td>{games_row_yellow.NAME}</td>
+			<td>{games_row_yellow.VERSION}</td>
+			<td class="hiddenSmartphone">{games_row_yellow.CONTACT}</td>
+			<td class="hiddenSmartphone">{games_row_yellow.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">{games_row_yellow.RATING}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF games_row_yellow.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{games_row_yellow.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END games_row_yellow -->
+		  <!-- BEGIN games_row_green -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-green"></i></td>
+			<td class="nowrap desktopOnly">{games_row_green.ACTION_LINK}</td>
+			<td class="nowrap desktopOnly">{games_row_green.DELETE_LINK}</td>
+			<td>{games_row_green.NAME}</td>
+			<td>{games_row_green.VERSION}</td>
+			<td class="hiddenSmartphone">{games_row_green.CONTACT}</td>
+			<td class="hiddenSmartphone">{games_row_green.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">{games_row_green.RATING}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF games_row_green.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{games_row_green.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END games_row_green -->
+		  <!-- BEGIN games_row_grey -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-gray"></i></td>
+			<td class="nowrap desktopOnly">{games_row_grey.ACTION_LINK}</td>
+			<td class="nowrap desktopOnly">{games_row_grey.DELETE_LINK}</td>
+			<td>{games_row_grey.NAME}</td>
+			<td>{games_row_grey.VERSION}</td>
+			<td class="hiddenSmartphone">{games_row_grey.CONTACT}</td>
+			<td class="hiddenSmartphone">{games_row_grey.DESCRIPTION}</td>
+			<td class="hiddenSmartphone">{games_row_grey.RATING}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF games_row_grey.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{games_row_grey.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END games_row_grey -->
+		  </table>
+	</div>
+	<!-- ENDIF -->
+	
+	<!-- IF S_SHOW_CAT_11 -->
+	<div id="fragment-11">
+		<div class="contentHeader">
+			<h1 class="contentTitle">{L_CATEGORY_11}</h1>
+		</div>
+		<table class="table fullwidth colorswitch">
+		  <tr>
+			<th class="left" style="width:20px">&nbsp;</th>
+			<th class="left" style="width:16px">{L_action}</th>
+			<th class="left">{L_name}</th>
+			<th class="left">{L_version}</th>
+			<th class="hiddenSmartphone left">{L_infos}</th>
+		  </tr>
+		  <!-- BEGIN language_row_red -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-red"></i></td>
+			<td class="nowrap desktopOnly">{language_row_red.ACTION_LINK}</td>
+			<td>{language_row_red.NAME}</td>
+			<td>{language_row_red.VERSION}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF language_row_red.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{language_row_red.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END language_row_red -->
+		  <!-- BEGIN language_row_yellow -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-yellow"></i></td>
+			<td class="nowrap desktopOnly">{language_row_yellow.ACTION_LINK}</td>
+			<td>{language_row_yellow.NAME}</td>
+			<td>{language_row_yellow.VERSION}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF language_row_yellow.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{language_row_yellow.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END language_row_yellow -->
+		  <!-- BEGIN language_row_green -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-green"></i></td>
+			<td class="nowrap desktopOnly">{language_row_green.ACTION_LINK}</td>
+			<td>{language_row_green.NAME}</td>
+			<td>{language_row_green.VERSION}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF language_row_green.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{language_row_green.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END language_row_green -->
+		  <!-- BEGIN language_row_grey -->
+		  <tr>
+			<td style="width:20px" class="center"><i class="fa fa-puzzle-piece fa-lg icon-color-gray"></i></td>
+			<td class="nowrap desktopOnly">{language_row_grey.ACTION_LINK}</td>
+			<td>{language_row_grey.NAME}</td>
+			<td>{language_row_grey.VERSION}</td>
+			<td class="hiddenSmartphone">
+				<!-- IF language_row_grey.BUGTRACKER_URL != "" -->
+				<span class="coretip" data-coretip="{L_bugtracker}"><a href="{language_row_grey.BUGTRACKER_URL}" target="_blank" rel="nofollow"><i class="fa fa-bug fa-lg"></i></a></span>
+				<!-- ENDIF -->
+			</td>
+		  </tr>
+		  <!-- END language_row_grey -->
+		  </table>
+	</div>
+	<!-- ENDIF -->
+	
+	<!-- IF S_SHOW_CAT_UPLOAD -->
+	<div id="fragment-upload">
+		<div class="infobox infobox-large infobox-blue clearfix">
+			<i class="fa fa-info-circle fa-4x pull-left"></i> {L_pi_manualupload_info}
+		</div>
+		<br />
+		<form enctype="multipart/form-data" action="{ACTION}" method="post">
+			<fieldset class="settings">
+				<legend>{L_pi_manualupload}</legend>
+				<dl>
+					<dt><label>{L_pi_choose_file}</label><br /><span></span></dt>
+					<dd><input type="file" name="extension" class="input" style="width:90%" /></dd>
+				</dl>
+			</fieldset>
+			<button type="submit" name="upload" class="mainoption bi_ok"><i class="fa fa-upload"></i> {L_pi_upload_button}</button>
+			{CSRF_TOKEN}
+		  </form>
+	</div>
+	<!-- ENDIF -->
+</div>

@@ -1,0 +1,147 @@
+<script type="text/javascript">
+
+var id = {KEY};
+
+function delete_row(obj){
+	$(obj).parent().parent().remove();
+	buildDepFieldDropdowns();
+}
+
+function add_row(){
+	var new_row = $('#reference_row').html()+"";
+	new_row = new_row.replace(/KEY/g, id);
+	id = id + 1;
+	$("#gr_form_table").find('tbody').append('<tr>'+new_row+'</tr>');
+	buildDepFieldDropdowns();
+}
+
+function type_change_listener(obj){
+	var area = $(obj).parent().parent().find("textarea");
+	if (obj.value == 2 || obj.value == 5 || obj.value == 6){
+		area.removeAttr('disabled');
+		area.css('height', '60px');
+	} else {
+		area.attr('disabled', 'disabled');
+		area.css('height', '20px');
+	}
+	
+	var help = $(obj).parent().parent().find(".gr_help");
+	if (obj.value == 3 || obj.value == 4){
+		help.attr('disabled', 'disabled');
+	} else {
+		help.removeAttr('disabled');
+	}
+	buildDepFieldDropdowns();
+}
+
+function buildDepFieldDropdowns(){
+	var options = new Array();
+	var myids = new Array();
+	var i = 0;
+	$('.gr_type').each(function(){
+		var type = $(this).val();
+		if (type==2 || type==5 || type==6){
+			var name = $(this).parent().parent().find('.gr_name').val();
+			var myid = $(this).parent().parent().find('.gr_id').val();
+			options[i] = name;
+			myids[i] = myid;
+			i++;
+		}
+	})
+
+	$('.gr_dep_field').each(function(){
+		var selected = $(this).val();
+		var dd = $(this);
+		$(this).html('<option value="0"></option><option value="999999999">__Custom</option>');
+		$.each(options, function(k,v){
+			if (myids[k] == 'KEY') return true;
+			$('<option value="'+myids[k]+'">'+v+'</option>').appendTo(dd);
+		})
+		if (($.inArray(selected, myids) != -1) || (selected == 999999999)){
+			dd.val(selected);
+		} else {
+			dd.parent().parent().find('.gr_dep_value').val('');
+		}
+	})
+}
+
+$(document).ready(function(){
+	buildDepFieldDropdowns();
+})
+</script>
+
+<!-- IF S_NORMAL_HEADER -->
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_guildrequest}: {L_gr_manage_form}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<!-- ENDIF -->
+	<div class="contentHeader">
+		<h1 class="contentTitle">{L_gr_manage_form}</h1>
+	</div>
+
+<div class="infobox infobox-large infobox-blue clearfix">
+	<i class="fa fa-info-circle fa-4x pull-left"></i> {L_gr_customcheck_info}
+</div>
+<br />
+<form name="gr_settings" action="{ACTION}" method="post">
+	<table id="gr_form_table" class="table fullwidth colorswitch">
+		<thead>
+		<tr class="not-sortable">
+			<th width="10px"></th>
+			<th width="10px"></th>
+			<th width="20px;"></th>
+			<th>{L_name}</th>
+			<th width="20px;">{L_type}</th>
+			<th>{L_description}</th>
+			<th>{L_gr_select_options}</th>
+			<th class="nowrap">{L_gr_dependency}</th>
+			<th width="20px;">{L_gr_required}</th>
+			<th width="20px;">{L_gr_in_list}</th>
+		</tr>
+		</thead>
+		<tbody>
+		<!-- BEGIN field_row -->
+		<tr>
+			<td><span class="ui-icon ui-icon-arrowthick-2-n-s" title="{L_dragndrop}"></span></td>
+			<td width="10px">#{field_row.KEY}</td>
+			<td align="center"><input type="hidden" name="field[{field_row.KEY}][id]" value="{field_row.KEY}" class="gr_id"/><i class="fa fa-trash-o fa-lg" title="{L_gr_delete_field}"  onclick="delete_row(this);"></i></td>
+			<td><input type="text" name="field[{field_row.KEY}][name]" value="{field_row.NAME}" class="input gr_name" style="width: 90%" /></td>
+			<td>{field_row.TYP_DD}</td>
+			<td><input type="text" name="field[{field_row.KEY}][help]" value="{field_row.HELP}" class="input gr_help" style="width: 90%" {field_row.HELP_DISABLED}/></td>
+			<td><textarea name="field[{field_row.KEY}][options]" rows="4" class="input" {field_row.OPTIONS_DISABLED} style="height:{field_row.OPTIONS_HEIGHT}px;width: 90%;">{field_row.OPTIONS}</textarea>
+			<td>{field_row.DEP_DD}<input type="text" name="field[{field_row.KEY}][dep_value]" value="{field_row.DEP_VALUE}" class="input gr_dep_value" /></td>
+			<td><input type="checkbox" name="field[{field_row.KEY}][required]" value="1" {field_row.REQUIRED}/></td>
+			<td><input type="checkbox" name="field[{field_row.KEY}][in_list]" value="1" {field_row.IN_LIST}/></td>
+		</tr>
+		<!-- END field_row -->
+		</tbody>
+	</table>
+	<div class="contentFooter">
+		<button type="button" onclick="add_row();"><i class="fa fa-plus"></i>{L_gr_add_field}</button>
+		<button type="submit" name="save"><i class="fa fa-check"></i>{L_save}</button>
+		<button type="button" onclick="window.open('preview.php{SID}', 'gr_preview')"><i class="fa fa-eye"></i>{L_gr_preview}</button>
+	</div>
+	
+{CSRF_TOKEN}
+</form>
+
+
+<table style="display:none;">
+	<tr id="reference_row">
+		<td><span class="ui-icon ui-icon-arrowthick-2-n-s" title="{L_dragndrop}"></span></td>
+		<td width="10px">#KEY</td>
+		<td align="center"><input type="hidden" name="field[KEY][id]" value="KEY" class="gr_id" /><i class="fa fa-trash-o fa-lg" title="{L_delte}" onclick="delete_row(this);"></i></td>
+		<td><input type="text" name="field[KEY][name]" value="" class="input gr_name" style="width: 90%" /></td>
+		<td>{TYP_DD}</td>
+		<td><input type="text" name="field[KEY][help]" value="" class="input gr_help" style="width: 90%" /></td>
+		<td><textarea name="field[KEY][options]" rows="4" class="input" disabled="disabled" style="height:20px;width: 90%;"></textarea>
+		<td><select name="field[KEY][dep_field]" class="gr_dep_field input"></select><input type="text" name="field[KEY][dep_value]" value="" class="input gr_dep_value" /></td>
+		<td><input type="checkbox" name="field[KEY][required]" value="1" /></td>
+		<td><input type="checkbox" name="field[KEY][in_list]" value="1" /></td>
+	</tr>
+</table>

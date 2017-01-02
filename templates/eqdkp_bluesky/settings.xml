@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings styleversion="0.0.8">	
+	<template_path>eqdkp_bluesky</template_path>
+	<body_background>#0e0e0e</body_background>
+	<body_link>#FFCF02</body_link>
+	<body_link_style>none</body_link_style>
+	<body_hlink>#000</body_hlink>
+	<body_hlink_style>none</body_hlink_style>
+	<header_link>#FFFFFF</header_link>
+	<header_link_style>none</header_link_style>
+	<header_hlink>#FFCF02</header_hlink>
+	<header_hlink_style>none</header_hlink_style>
+	<tr_color1>#7D7D7D</tr_color1>
+	<tr_color2>#303030</tr_color2>
+	<th_color1>#D9D7D7</th_color1>
+	<fontface1>Verdana, Arial, Helvetica, sans-serif</fontface1>
+	<fontface2>Verdana, Arial, Helvetica, sans-serif</fontface2>
+	<fontface3>Verdana, Arial, Helvetica, sans-serif</fontface3>
+	<fontsize1>10</fontsize1>
+	<fontsize2>11</fontsize2>
+	<fontsize3>12</fontsize3>
+	<fontcolor1>#D9D7D7</fontcolor1>
+	<fontcolor2>#FFFFFF</fontcolor2>
+	<fontcolor3>#000000</fontcolor3>
+	<fontcolor_neg>#FF0000</fontcolor_neg>
+	<fontcolor_pos>#008800</fontcolor_pos>
+	<table_border_width>1</table_border_width>
+	<table_border_color>#999999</table_border_color>
+	<table_border_style>solid</table_border_style>
+	
+	<table_th_background_color>rgba(0, 0, 0, 0.65)</table_th_background_color>
+	<table_th_font_color>rgb(159, 159, 159)</table_th_font_color>
+	<table_tr_font_color>rgb(159, 159, 159)</table_tr_font_color>
+	<table_tr_background_color1>rgba(125, 125, 125,0)</table_tr_background_color1>
+	<table_tr_background_color2>rgba(125, 125, 125,0.55)</table_tr_background_color2>
+	<table_tr_background_color_hover>rgba(0, 0, 0,0.4)</table_tr_background_color_hover>
+	
+	<table_border_color>rgb(41, 35, 35)</table_border_color>
+	<input_color>#292323</input_color>
+	<input_border_width>1</input_border_width>
+	<input_border_color>#F7992B</input_border_color>
+	<input_border_style>solid</input_border_style>
+	<attendees_columns>6</attendees_columns>
+	<logo_position>center</logo_position>
+	<background_pos>normal</background_pos>
+	<background_type>0</background_type>
+	<css_file></css_file>
+	<use_db_vars>1</use_db_vars>
+	<portal_width>0px</portal_width>
+	<column_right_width>0px</column_right_width>
+	<column_left_width>0px</column_left_width>
+	<sidebar_background_color>rgba(23,31,44,.4)</sidebar_background_color>
+	<sidebar_font_color>rgb(197, 229, 255)</sidebar_font_color>
+	<sidebar_border_color>rgba(84, 182, 240, 1)</sidebar_border_color>
+	<content_contrast_color>rgb(197, 229, 255)</content_contrast_color>
+	<content_contrast_background_color>rgba(23,31,44,.4)</content_contrast_background_color>
+	<content_contrast_border_color>rgba(0,0,0,.4)</content_contrast_border_color>
+	<content_positive_color>rgb(51, 204, 51)</content_positive_color>
+	<content_negative_color>rgb(226, 59, 48)</content_negative_color>
+	<content_neutral_color>rgb(153, 153, 153)</content_neutral_color>
+	<content_highlight_color>rgba(255, 255, 255, 1)</content_highlight_color>
+
+</settings>

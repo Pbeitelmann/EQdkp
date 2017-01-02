@@ -1,0 +1,51 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_gb_manage_bankers}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<form method="post" action="{ACTION}" name="post">
+	<div class="contentHeader">
+		<h1 class="contentTitle">{L_gb_manage_bankers}</h1>
+	</div>
+	<div class="clear"></div>
+	<table id="calendars_table" class="table fullwidth colorswitch">
+		<tr>
+			<th width="20"></th>
+			<th></th>
+			<th>{L_name}</th>
+			<th>{L_gb_money}</th>
+			<th>{L_gb_banker_mainchar}</th>
+			<th>{L_note}</th>
+		</tr>
+		<!-- BEGIN bankers -->
+		<tr>
+			<td class="middle">
+				<input type="checkbox" name="banker_ids[]" value="{bankers.ID}" />
+				<input type="hidden" name="bankers[{bankers.KEY}][id]" value="{bankers.ID}" />
+			</td>
+			<td class="middle"><a href="manage_bank_details.php{SID}&g={bankers.ID}"><i class="fa fa-database fa-lg"></i></a></td>
+			<td class="middle"><input type="text" name="bankers[{bankers.KEY}][name]" size="30" maxlength="50" value="{bankers.NAME}" class="maininput" /></td>
+			<td class="middle">{bankers.MONEY}</td>
+			<td class="middle">{bankers.DR_BANKCHAR}</td>
+			<td class="middle"><input type="text" name="bankers[{bankers.KEY}][note]" size="50" maxlength="250" value="{bankers.NOTE}" class="maininput" /></td>
+		</tr>
+		<!-- END bankers -->
+		<tr>
+			<td><input type="hidden" name="bankers[{KEY}][id]" value="{ID}" /></td>
+			<td></td>
+			<td class="middle"><input type="text" name="bankers[{KEY}][name]" size="30" maxlength="50" value="" class="maininput" /></td>
+			<td class="middle">{MONEY}</td>
+			<td class="middle">{DR_BANKCHAR}</td>
+			<td class="middle"><input type="text" name="bankers[{KEY}][note]" size="50" maxlength="250" value="" class="maininput" /></td>
+		</tr>
+	</table>
+	<div class="contentFooter">
+		<button class="mainoption" type="submit" name="save" ><i class="fa fa-check"></i>{L_save}</button>
+		<button class="liteoption" type="button" name="del" onclick="delete_warning();"><i class="fa fa-times"></i>{L_delete}</button>
+		<input type="hidden" name="del" value="1" disabled="disabled" id="mass_del_submit" />
+	</div>
+{CSRF_TOKEN}
+</form>

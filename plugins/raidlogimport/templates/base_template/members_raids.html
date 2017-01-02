@@ -1,0 +1,46 @@
+<tr>
+	<th colspan="{RAIDCOUNT3}">{L_members}</th>
+	<!-- IF S_ATT_BEGIN or S_ATT_END --><th <!-- IF S_ATT_BEGIN and S_ATT_END -->colspan="2"<!-- ENDIF -->>{L_rli_att}</th><!-- ENDIF -->
+</tr>
+<tr>
+	<th width="45px">&nbsp;</th>
+	<th width="150">{L_name}</th>
+	<th colspan="{RAIDCOUNT}">{L_raids}</th>
+	<!-- IF S_ATT_BEGIN --><th>{L_rli_start}</th><!-- ENDIF -->
+	<!-- IF S_ATT_END --><th>{L_rli_end}</th><!-- ENDIF -->
+</tr>
+<!-- IF MEMBER_DISPLAY -->
+<tr>
+	<td colspan="2"></td>{MEMBER_DISPLAY}<!-- IF S_ATT_BEGIN --><td></td><!-- ENDIF --><!-- IF S_ATT_END --><td></td><!-- ENDIF -->
+</tr>
+<!-- ENDIF -->
+<!-- BEGIN player -->
+<tr id="memberrow_{player.KEY}" {player.DISPLAY}>
+	<td align="right">
+		{player.NR}&nbsp;<i class="fa fa-trash-o fa-lg del_mem" title="{L_delete}" data-id="memberrow_{player.KEY}"></i>
+		<input type="hidden" id="memberrow_{player.KEY}submit" name="members[{player.KEY}][delete]" value="true" {player.DELDIS} />
+	</td>
+	<td width="300"><input type="text" name="members[{player.KEY}][name]" value="{player.MITGLIED}" /> {player.ALIAS} {player.RANK}</td>
+	{player.RAID_LIST}
+	<!-- IF S_ATT_BEGIN -->
+	<td align="right"><input type="checkbox" name="members[{player.KEY}][att_begin]" class="maininput" value="true" {player.ATT_BEGIN} size="5" /></td>
+	<!-- ENDIF -->
+	<!-- IF S_ATT_END -->
+	<td align="right"><input type="checkbox" name="members[{player.KEY}][att_end]" class="maininput" value="true" {player.ATT_END} size="5" /></td>
+	<!-- ENDIF -->
+</tr>
+<!-- END player -->
+
+<style>
+   .verticalText
+   {
+       text-align: center;
+       vertical-align: middle;
+       margin: 0px;
+       padding: 0px;
+       white-space: nowrap;
+       -webkit-transform: rotate(-90deg); 
+       -moz-transform: rotate(-90deg);     
+       display: inline-block;            
+   };
+</style>

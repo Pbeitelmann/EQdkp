@@ -1,0 +1,89 @@
+<script type="text/javascript">
+	function import_dialog(){
+		$('#localitembase_import').dialog({
+			title: {L_lit_fs_export_import|jsencode},
+			height: 'auto',
+			width: 600,
+			modal: true,
+			buttons: {
+				{L_cancel|jsencode}: function() {
+					$(this).dialog('destroy');
+				}
+			},
+			close: function(event, ui){
+				$(this).dialog('destroy');
+			}
+		});
+	}
+	
+	function import_file(){
+		var formData = new FormData($('#localitembase_import form')[0]);
+		
+		$.ajax({
+			url : "{EQDKP_CONTROLLER_PATH}ItemBase{SEO_EXTENSION}{SID}&import",
+			type: "POST",
+			data : formData,
+			processData: false,
+			contentType: false,
+			success:function(data, textStatus, jqXHR){
+				$('#localitembase_import').dialog('destroy');
+				window.location.href='{EQDKP_CONTROLLER_PATH}ItemBase{SEO_EXTENSION}{SID}&success';
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				$('#localitembase_import').dialog('destroy');
+				$('#notify_container').notify('create', 'error', {text: jqXHR.status+' '+jqXHR.statusText, title: {L_error|jsencode},custom: true,},{expires: 10000, speed: 1000});
+			}
+		});
+	}
+</script>
+
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a href="">{L_localitembase}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<form method="post" action="{ACTION}" name="post">
+	<div class="contentHeader">
+		<h1 class="contentTitle">{L_localitembase}</h1>
+	</div>
+	
+	<div class="tableHeader floatRight">
+		<button class="mainoption" type="button" name="addadj" onclick="window.location='{NEW_ITEM_LINK}'"><i class="fa fa-plus"></i>{L_lit_add_item}</button>
+	</div>
+	<div class="clear"></div>
+	<table width="100%" border="0" cellspacing="1" cellpadding="2" class="table colorswitch" id="article_categories-table">
+		{ITEM_LIST}
+	</table>
+	<div class="center pagination_wrapper">
+		{PAGINATION}
+	</div>
+	<div class="contentFooter">
+		<button class="mainoption" type="button" name="del" onclick="delete_warning();"><i class="fa fa-times"></i>{L_lit_delete_selected_items}</button>
+		<!-- IF S_HAS_IMPORT_PERM -->
+		<button class="mainoption" type="button" onclick="import_dialog();"><i class="fa fa-exchange fa-lg fa-fw"></i>{L_lit_fs_export_import}</button>
+		<!-- ENDIF -->
+		<input type="hidden" name="del" value="1" disabled="disabled" id="mass_del_submit" />
+	</div>
+{CSRF_TOKEN}	
+</form>
+<!-- IF S_HAS_IMPORT_PERM -->
+<div id="localitembase_import" style="display:none;">
+	<form method="post" enctype="multipart/form-data">
+		<fieldset class="settings mediumsettings">
+			<dl>
+				<dt><label>{L_lit_f_import}</label>
+				<dd><input type="file" name="file" value="" onchange="import_file(this);" /></dd>
+			</dl>
+			<dl>
+				<dt><label>{L_lit_f_export}</label>
+				<dd><button class="mainoption" type="button" onclick="window.location='{EQDKP_CONTROLLER_PATH}ItemBase{SEO_EXTENSION}{SID}&export'"><i class="fa fa-floppy-o fa-lg"></i>{L_lit_download}</button></dd>
+			</dl>
+		</fieldset>
+		{CSRF_TOKEN}
+	</form>
+</div>
+<!-- ENDIF -->

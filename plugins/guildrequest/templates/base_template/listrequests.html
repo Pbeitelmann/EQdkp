@@ -1,0 +1,27 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li class="current"><a>{L_gr_view}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<div class="contentHeader">
+	<h1 class="contentTitle">{L_gr_view}</h1>
+</div>
+<form method="post" action="{ACTION}" name="post">
+	<button type="submit" name="mark_all_read" class="floatRight"><i class="fa fa-check-square-o"></i>{L_gr_mark_all_as_read}</button>
+	<div class="clear"></div>
+	<table class="table fullwidth colorswitch">
+		{PAGE_OUT}
+	</table>
+	<div class="center pagination_wrapper">
+		{GR_PAGINATION}
+	</div>
+	
+	<!-- IF S_GR_ADMIN -->
+	<button class="mainoption bi_delete"  onclick="delete_warning();" type="button" name="del"><i class="fa fa-times"></i>{L_gr_delete_selected_requests}</button>
+	<input type="hidden" name="del" value="1" disabled="disabled" id="mass_del_submit" />
+	<!-- ENDIF -->
+	<div class="clear"></div>
+{CSRF_TOKEN}
+</form>

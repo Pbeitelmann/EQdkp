@@ -1,0 +1,68 @@
+<!-- IF S_NORMAL_HEADER -->
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_raidlogimport}: {L_rli_check_data}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<!-- ENDIF -->
+
+<form method="post" action="{ACTION}" id="rli_import_form">
+	<div id='rli_nav_tabs'>
+		<ul>
+			<li><a href="#raids" id="rli_nav_raids"><span>{L_raids}</span></a><input type="hidden" name="checkraid" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#members" id="rli_nav_members"><span>{L_members}</span></a><input type="hidden" name="checkmem" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#items" id="rli_nav_items"><span>{L_items}</span></a><input type="hidden" name="checkitem" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#adjustments" id="rli_nav_adjustments"><span>{L_adjustments}</span></a><input type="hidden" name="checkadj" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#viewall" id="rli_nav_viewall"><span>{L_rli_check_data}</span></a><input type="hidden" name="viewall" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#finish" id="rli_nav_finish"><span>{L_rli_finish}</span></a><input type="hidden" name="insert" value="{L_update}" disabled="disabled" /></li>
+		</ul>
+		<div id="raids">
+				<span><i class="fa fa-refresh fa-spin fa-lg"></i> {L_rli_loading} </span>
+		</div>
+		<div id="members">
+				<span><i class="fa fa-refresh fa-spin fa-lg"></i> {L_rli_loading} </span>
+		</div>
+		<div id="items">
+				<span><i class="fa fa-refresh fa-spin fa-lg"></i> {L_rli_loading} </span>
+		</div>
+		<div id="adjustments">
+			<table id="adj" class="table fullwidth colorswitch">
+			<tr>
+				<th width="40px"><input type="checkbox" id="rli_select_all"/></th><th>{L_member}</th><th>{L_event}</th><th>{L_raid}</th><th>{L_note}</th><th>{L_value}</th>
+			</tr>
+			<!-- BEGIN adjs -->
+			<tr id="adj_{adjs.KEY}" {adjs.DISPLAY}>
+				<td align="right"><input type="checkbox" name="adjs[{adjs.KEY}][delete]" value="true" title="{L_delete}" class="rli_select_me" {adjs.DELCHK} /></td>
+				<td>{adjs.MEMBER}</td>
+				<td>{adjs.EVENT}</td>
+				<td>{adjs.RAID}</td>
+				<td><input type="text" name="adjs[{adjs.KEY}][reason]" value="{adjs.NOTE}" class="maininput" {adjs.READONLY} /></td>
+				<td><input type="text" name="adjs[{adjs.KEY}][value]" value="{adjs.VALUE}" class="maininput" /></td>
+			</tr>
+			<!-- END adjs -->
+			<tr>
+				<td colspan="3">
+					<button type="button" value="{L_rli_add_adj}" id="add_adj_button" class="mainoption bi_new"><i class="fa fa-plus"></i> {L_rli_add_adj}</button>
+				</td>
+				<td colspan="3">&nbsp;</td>
+			</tr>
+			<tr>
+				<th colspan="6">
+					<button type="submit" name="checkadj" value="{L_update}" class="mainoption"><i class="fa fa-refresh"></i> {L_update}</button>
+					<button type="submit" name="checkadj" value="{L_update}" class="mainoption"><i class="fa fa-trash-o"></i> {L_delete_selected_adjs}</button>
+					<button type="submit" name="insert" value="{L_rli_go_on}" class="mainoption"><i class="fa fa-arrow-right"></i> {L_rli_go_on}</button>
+				</th>
+			</tr>
+			</table>
+		</div>
+		<div id="viewall">
+				<span><i class="fa fa-refresh fa-spin fa-lg"></i> {L_rli_loading} </span>
+		</div>
+		<div id="finish">
+				<span><i class="fa fa-refresh fa-spin fa-lg"></i> {L_rli_loading} </span>
+		</div>
+	</div>
+</form>

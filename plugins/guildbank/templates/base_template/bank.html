@@ -1,0 +1,117 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li class="current"><a>{L_gb_title_page}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<table class="table fullwidth borderless">
+	<tr>
+		<td width="65%" valign="top">
+			<table class="table fullwidth colorswitch">
+				<tr>
+					<th align="left" width="100%" nowrap="nowrap">{L_gb_banker}</th>
+					<!-- IF SHOW_MONEY -->
+						<!-- BEGIN money_row -->
+					<th align="center" width="50px">{money_row.IMAGE}</th>
+						<!-- END money_row -->
+					<!-- ENDIF -->
+					<th align="left" width="100%" nowrap="nowrap">{L_gb_update}</th>
+				</tr>
+				<!-- IF MERGE_BANKERS -->
+				<tr>
+					<td align="left" nowrap="nowrap">{L_gb_all_bankers}</td>
+					<!-- IF SHOW_MONEY -->
+						<!-- BEGIN money_row -->
+					<td align="center" nowrap="nowrap">{money_row.VALUE}</td>
+						<!-- END money_row -->
+					<!-- ENDIF -->
+					<td align="left" nowrap="nowrap">{L_gb_not_avail}</td>
+				</tr>
+				<!-- ELSE -->
+				<!-- BEGIN banker_row -->
+				<tr>
+					<td align="right" nowrap="nowrap" >
+						<span class="coretip" data-coretip="{banker_row.TOOLTIP}">{banker_row.NAME} {banker_row.BANKCHAR}</span>
+					</td>
+					<!-- IF SHOW_MONEY -->
+						<!-- BEGIN cmoney_row -->
+					<td align="center" nowrap="nowrap">{banker_row.cmoney_row.VALUE}</td>
+						<!-- END cmoney_row -->
+					<!-- ENDIF -->
+					<td align="left" nowrap="nowrap">{banker_row.UPDATE}</td>
+				</tr>
+				<!-- END banker_row -->
+				<tr>
+					<td align="left" nowrap="nowrap">{L_gb_total_bankers}</td>
+					<!-- IF SHOW_MONEY -->
+						<!-- BEGIN money_row -->
+					<td align="center" nowrap="nowrap">{money_row.VALUE}</td>
+						<!-- END money_row -->
+					<!-- ENDIF -->
+					<td align="center" nowrap="nowrap">---</td>
+				</tr>
+				<!-- ENDIF -->
+			</table>
+		</td>
+		<td  width="35%" valign="top">
+			<form method="get" action="{ACTION}">
+				<table  class="table fullwidth colorswitch">
+					<tr>
+						<th align="left" width="100%" nowrap="nowrap" colspan="2">Filter</th>
+					</tr>
+					<tr>
+						<td align="left" nowrap="nowrap">{L_gb_filter_banker}</td>
+						<td align="left" nowrap="nowrap">{DD_BANKER}</td>
+					</tr>
+					<tr>
+						<td align="left" nowrap="nowrap">{L_gb_filter_type}</td>
+						<td align="left" nowrap="nowrap">{DD_TYPE}</td>
+					</tr>
+					<tr>
+						<td align="left" nowrap="nowrap">{L_gb_filter_rarity}</td>
+						<td align="left" nowrap="nowrap">{DD_RARITY}</td>
+					</tr>
+				</table>
+			</form>
+		</td>
+	</tr>
+</table>
+
+<br />
+<div id='guildbank_tab'>
+	<ul>
+		<li><a href='#fragment-items'><span>{L_gb_tab_items}</span></a></li>
+		<li><a href='#fragment-transactions'><span>{L_gb_tab_transactions}</span></a></li>
+		<!-- IF SHOW_AUCTIONS --><li><a href='#fragment-auctions'><span class="bubble">{AUCTIONCOUNT}</span> <span>{L_gb_tab_auctions}</span></a></li><!-- ENDIF -->
+	</ul>
+
+	<div id="fragment-items">
+		<table class="table fullwidth colorswitch">
+			{ITEMS_TABLE}
+		</table>
+		<div class="center pagination_wrapper">
+			{PAGINATION_ITEM}
+		</div>
+	</div>
+	<div id="fragment-transactions">
+		<table class="table fullwidth colorswitch">
+			{TRANSA_TABLE}
+		</table>
+		<div class="center pagination_wrapper">
+			{PAGINATION_TRANSA}
+		</div>
+	</div>
+	<!-- IF SHOW_AUCTIONS -->
+	<div id="fragment-auctions">
+		<table class="table fullwidth colorswitch">
+			{AUCTION_TABLE}
+		</table>
+		<div class="center pagination_wrapper">
+			{PAGINATION_AUCTION}
+		</div>
+	</div>
+	<!-- ENDIF -->
+</div>
+
+<br/><div class="center credits">{CREDITS}</div>

@@ -1,0 +1,212 @@
+<!-- IF S_NORMAL_HEADER -->
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_massmail}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<!-- ENDIF -->
+
+<script type="text/javascript">
+var recent_template = "{MM_TEMPLATE_NAME}";
+var mode = "add";
+function insert(text){
+	$('#mm_body').tinymce().execCommand('mceInsertContent',false,text);
+}
+
+function open_add_template(){
+	$('#mytemplatename').val("");
+	mode = "add";
+	$( "#dialog-add-template" ).dialog( "open" );
+}
+
+function open_save_template(){
+	$('#mytemplatename').val(recent_template);
+	mode = "save";
+	$( "#dialog-add-template" ).dialog( "open" );
+}
+
+function save_template(){
+	$( "#dialog-add-template" ).dialog( "open" );
+}
+
+function add_template(){
+	var templatename = $('#mytemplatename').val();
+	
+	if (templatename != ""){
+		$('.template_loading_indicator').show();
+		$( "#dialog-add-template" ).dialog("close");
+		
+		var subject = $('#subject').val();
+		var message = $('#mm_body').tinymce().getContent();
+		$.post("manage_massmail.php{SID}&add_template=true&link_hash={CSRF_ADDTEMPLATE_TOKEN}", { templatename: templatename, subject: subject, message: message, eventid:{NUM_EVENT_ID}})
+		.success(function(data) {
+			$('.template_loading_indicator').hide();
+			var mydata = $.trim(data);
+			if(mydata.substring(0, 2) == 'ok'){
+				//Check if it was saved as a new template
+				
+				
+				if(mode == "save"){
+					if(templatename != recent_template){
+						mode = "add";
+					}
+				}
+				
+				if(mode == "add"){	
+					var arrSplitted = mydata.split("||");
+					recent_template = arrSplitted[1];
+					var new_dropdown = arrSplitted[2];
+					
+					$('#dropdown_templates_container').html(new_dropdown);
+					
+					$('#add_template_button').hide();
+					$('#save_template_button').show();
+					$('#delete_template_button').show();
+				}
+				console.log(mode);
+				$('#notify_container').notify('create', 'success', {text: {L_massmail_save_success|jsencode},title: '',custom: true,},{expires: 3000, speed: 1000});
+			} else {
+				$('#notify_container').notify('create', 'error', {text: {L_massmail_save_nosuccess|jsencode},title: '',custom: true,},{expires: 30000, speed: 1000});
+			}
+		})
+		.error(function(data) { 
+			$('#notify_container').notify('create', 'error', {text: {L_massmail_save_nosuccess|jsencode},title: '',custom: true,},{expires: 30000, speed: 1000});	
+		});
+		
+	}
+}
+
+function load_template(){
+	var templatename = $( "#template" ).val();
+	if(templatename == ""){
+		$('#subject').val("");
+		$('#mm_body').tinymce().setContent('');
+		mode = "add";
+		
+		$('#add_template_button').show();
+		$('#save_template_button').hide();
+		$('#delete_template_button').hide();
+		return;
+	}
+	
+	$('.template_loading_indicator').show();
+	
+	$.post("manage_massmail.php{SID}&load_template=true", { template: templatename})
+	.success(function(data) {
+		$('.template_loading_indicator').hide();
+		var mydata = $.trim(data);
+		if(mydata.substring(0, 2) == 'ok'){
+			var arrSplitted = mydata.split("|;|;|;");
+			var subject = arrSplitted[1];
+			var body = arrSplitted[2];
+			
+			$('#subject').val(subject);
+			
+			$('#mm_body').tinymce().setContent('');
+			$('#mm_body').tinymce().execCommand('mceInsertContent',false,body);
+			
+			//Display some buttons
+			$('#add_template_button').hide();
+			$('#save_template_button').show();
+			$('#delete_template_button').show();
+			
+			//Set recent template
+			recent_template = templatename;
+		}
+	})
+	.error(function(data) { 
+	});
+}
+
+$(document).ready(function() {
+	$( "#dialog-add-template" ).dialog({
+		height: 200,
+		width: 400,
+		modal: true,
+		autoOpen: false,
+	});
+	
+	$('#addtemplate-button').click(function(){
+		add_template();
+	});
+});
+</script>
+	
+<form method="post" action="{ACTION}{EVENT_ID}" name="massmail">
+	<fieldset class="settings smallsettings">
+		<legend>{L_massmail}</legend>
+		<dl>
+			<dt><label>{L_massmail_method}</label></dt>
+			<dd>{DD_METHOD}</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_massmail_to_group}</label></dt>
+			<dd>{DD_GROUPS}</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_massmail_to_user}</label></dt>
+			<dd>{DD_USERS}</dd>
+		</dl>
+		<!-- IF S_EVENT_ID -->
+		<dl>
+			<dt><label>{L_massmail_to_status}</label></dt>
+			<dd>{DD_STATUS}</dd>
+		</dl>
+		<!-- IF S_RAIDGROUPS -->
+		<dl>
+			<dt><label>{L_calendar_raidgroup}</label></dt>
+			<dd>{DD_RAIDGROUPS}</dd>
+		</dl>
+		<!-- ENDIF -->
+		<!-- ENDIF -->
+		<dl>
+			<dt><label>{L_massmail_select_template}</label></dt>
+			<dd id="dropdown_templates_container">{DD_TEMPLATE}<span class="template_loading_indicator" style="display:none;"><i class="fa fa-lg fa-spin fa-spinner"></i></span></dd>
+		</dl>
+		<dl>
+			<dt><label>{L_adduser_send_mail_subject}</label></dt>
+			<dd><input name="subject" type="text" class="input" id="subject" size="65" value="{SUBJECT}"/></dd>
+		</dl>
+		<dl>
+			<dt><label>{L_adduser_send_mail_body}</label><br /><br />			
+			<span>{L_massmail_vars}<br />
+			&#123;DKP_NAME&#125;<br />
+			&#123;EQDKP_LINK&#125;<br />
+			&#123;DATE&#125;<br />
+			&#123;USERNAME&#125;<br />
+			<!-- IF S_EVENT_ID -->
+			&#123;EVENT_NAME&#125;<br />
+			&#123;EVENT_DATE&#125;<br />
+			&#123;EVENT_LINK&#125;
+			<!-- ENDIF -->
+			</span></dt>
+			<dd><textarea name="body" class="mceEditor" cols="70" rows="15" style="width:100%;" id="mm_body">{BODY}</textarea>
+				<br /><button class="mainoption" type="button" onclick="massmailContentDialog();"><i class="fa fa-plus"></i>{L_massmail_add_content}</button>
+			</dd>
+		</dl>
+	</fieldset>
+	<div class="contentFooter">
+		<button class="mainoption" type="submit" name="submit"><i class="fa fa-check"></i>{L_maintenanceuser_send}</button>
+		
+		<button type="button" id="save_template_button" name="save_template" onclick="open_save_template()" <!-- IF not S_IS_TEMPLATE -->style="display:none;"<!-- ENDIF -->><i class="fa fa-floppy-o"></i> {L_massmail_save_template}</button>
+		<button type="button" id="add_template_button" name="add_template" onclick="open_add_template()" <!-- IF S_IS_TEMPLATE -->style="display:none;"<!-- ENDIF -->><i class="fa fa-clipboard"></i> {L_massmail_add_template}</button>
+		<button type="submit" id="delete_template_button" name="delete_template" <!-- IF not S_IS_TEMPLATE -->style="display:none;"<!-- ENDIF -->><i class="fa fa-trash"></i> {L_massmail_delete_template}</button>
+		<button type="reset" name="reset"><i class="fa fa-trash-o"></i>{L_reset}</button>
+	</div>
+{CSRF_TOKEN}
+</form>
+
+<div id="dialog-add-template" title="{L_massmail_add_template}" style="display:none;">
+		<fieldset class="settings mediumsettings">
+			<dl>
+				<dt><label>{L_name}:</label></dt>
+				<dd>
+					<input type="text" id="mytemplatename" style="width: 90%" />
+				</dd>
+			</dl>
+		</fieldset>
+	<button type="button" id="addtemplate-button"><i class="fa fa-check"></i> {L_submit}</button>
+</div>

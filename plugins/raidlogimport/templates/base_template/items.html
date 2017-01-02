@@ -1,0 +1,89 @@
+<!-- IF S_NORMAL_HEADER -->
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_raidlogimport}: {L_rli_check_data}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<!-- ENDIF -->
+
+<form method="post" action="{ACTION}" id="rli_import_form">
+	<div id='rli_nav_tabs'>
+		<ul>
+			<li><a href="#raids" id="rli_nav_raids"><span>{L_raids}</span></a><input type="hidden" name="checkraid" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#members" id="rli_nav_members"><span>{L_members}</span></a><input type="hidden" name="checkmem" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#items" id="rli_nav_items"><span>{L_items}</span></a><input type="hidden" name="checkitem" value="{L_update}" disabled="disabled" /></li>
+			<!-- IF not S_DEACTIVATE_ADJ -->
+				<li><a href="#adjustments" id="rli_nav_adjustments"><span>{L_adjustments}</span></a><input type="hidden" name="checkadj" value="{L_update}" disabled="disabled" /></li>
+			<!-- ENDIF -->
+			<li><a href="#viewall" id="rli_nav_viewall"><span>{L_rli_check_data}</span></a><input type="hidden" name="viewall" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#finish" id="rli_nav_finish"><span>{L_rli_finish}</span></a><input type="hidden" name="insert" value="{L_update}" disabled="disabled" /></li>
+		</ul>
+		<div id="raids">
+				<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+		</div>
+		<div id="members">
+				<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+		</div>
+		<div id="items">
+			<table class="table fullwidth colorswitch">
+				<tr>
+					<th colspan="2">{L_item}</th>
+					<th>{L_rli_item_id}</th>
+					<th>{L_rli_looter}</th>
+					<th>{L_raid}</th>
+					<th>{L_itempool}</th>
+					<th colspan="2">{L_rli_cost}</th>
+				</tr>
+				<!-- BEGIN loots -->
+				<tr id="item_{loots.KEY}" {loots.DISPLAY}>
+					<td>
+						&nbsp;<i class="fa fa-trash-o fa-lg del_item hand" title="{L_delte}" data-id="item_{loots.KEY}"></i>
+						<input type="hidden" id="item_{loots.KEY}submit" name="loots[{loots.KEY}][delete]" value="true" {loots.DELDIS} />
+					</td>
+					<td><input type="text" name="loots[{loots.KEY}][name]" class="input" value="{loots.LOOTNAME}" size="40" {loots.READONLY} /></td>
+					<td><input type="text" name="loots[{loots.KEY}][game_id]" class="input" value="{loots.ITEMID}" /></td>
+					<td>{loots.LOOTER}</td>
+					<td>{loots.RAID}</td>
+					<td>{loots.ITEMPOOL}</td>
+					<td><input type="text" name="loots[{loots.KEY}][value]" value="{loots.LOOTDKP}" class="maininput" size="7" /></td>
+					<!-- IF S_IP_SAVE -->
+					<td><input type="checkbox" name="itempool_save[]" value="{loots.KEY}" class="input" /></td>
+					<!-- ENDIF -->
+				</tr>
+				<!-- END loots -->
+				<tr>
+					<td colspan="4">
+						<button type="button" id="add_item_button" class="mainoption bi_new" value="{L_rli_add_item}"><i class="fa fa-plus"></i> {L_rli_add_item}</button>
+					</td>
+					<td colspan="4">
+						<!-- IF S_IP_SAVE -->
+						<button type="submit" name="save_itempools" class="mainoption bi_save" value="{L_rli_save_itempool}"><i class="fa fa-check"></i> {L_rli_save_itempool}</button>
+						<!-- ENDIF -->
+					</td>
+				</tr>
+				<tr>
+					<th colspan="8">
+						<button type="submit" name="checkitem" value="{L_update}"><i class="fa fa-refresh"></i> {L_update}</button>
+						{NEXT_BUTTON}
+					</th>
+				</tr>
+			</table>
+		</div>
+		<!-- IF not S_DEACTIVATE_ADJ -->
+			<div id="adjustments">
+				<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+			</div>
+		<!-- ELSE -->
+			<div id="viewall">
+				<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+			</div>
+		<!-- ENDIF -->
+		<div id="finish">
+			<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+		</div>
+	</div>
+</form>
+

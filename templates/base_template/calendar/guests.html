@@ -1,0 +1,68 @@
+<!-- IF PERM_ADD -->
+<form method="post" action="{ACTION}" name="addWC">
+<input type="hidden" name="eventid" value="{EVENT_ID}">
+<input type="hidden" name="guestid" value="{GUEST_ID}">
+
+<fieldset class="settings smallsettings">
+	<dl>
+		<dt><label>{L_name}:</label></dt>
+		<dd>
+			<!-- IF GUEST_ID -->
+			{MEMBER_NAME}
+			<input type="hidden" name="membername" size="20" value="{MEMBER_NAME}" class="input" />
+			<!-- ELSE -->
+			<input type="text" name="membername" size="20" value="" class="input" />
+			<!-- ENDIF -->
+		</dd>
+	</dl>
+	<dl>
+		<dt><label>{L_class}:</label></dt>
+		<dd>{CLASS_DD}</dd>
+	</dl>
+	<dl>
+		<dt><label>{L_note}:</label></dt>
+		<dd><input type="text" name="note" size="50" maxlength="255" value="{NOTE}" class="input" /></dd>
+	</dl>
+</fieldset>
+<input type="submit" name="add" value="{L_raidevent_raid_gbutton}" class="mainoption bi_ok" />
+{CSRF_TOKEN}
+</form>
+<!-- ELSEIF PERM_GUESTAPPLICATION -->
+<form method="post" action="{ACTION}" name="raidattend_request">
+<input type="hidden" name="eventid" value="{EVENT_ID}">
+
+<fieldset class="settings smallsettings">
+	<dl>
+		<dt><label>{L_name}:</label></dt>
+		<dd><input type="text" name="membername" size="20" value="" class="input" required /></dd>
+	</dl>
+	<dl>
+		<dt><label>{L_email}:</label></dt>
+		<dd><input type="email" name="email" size="20" value="" class="input" required /></dd>
+	</dl>
+	<dl>
+		<dt><label>{L_class}:</label></dt>
+		<dd>{CLASS_DD}</dd>
+	</dl>
+	<dl>
+		<dt><label>{L_note}:</label></dt>
+		<dd><input type="text" name="note" size="50" maxlength="255" value="{NOTE}" class="input" /></dd>
+	</dl>
+	<!-- IF S_CEG_DISPLAY_CATPCHA -->
+	<dl>
+		<dt><label>{L_lib_captcha_head}:</label></dt>
+		<dd>{CEG_CAPTCHA}</dd>
+	</dl>
+	<!-- ENDIF -->
+</fieldset>
+<input type="submit" name="add" value="{L_raidevent_raid_apply}" class="mainoption bi_ok" />
+{CSRF_TOKEN}
+</form>
+<!-- ELSE -->
+<fieldset class="settings smallsettings">
+	<dl>
+		<dt></dt>
+		<dd>No Permission or guest application disabled</dd>
+	</dl>
+</fieldset>
+<!-- ENDIF -->

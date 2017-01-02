@@ -1,0 +1,44 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li><a href="{EQDKP_CONTROLLER_PATH}ItemBase{SEO_EXTENSION}{SID}">{L_localitembase}</a></li>
+		<li class="current"><a>{ITEM_NAME}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<div class="contentHeader">
+	<h1 class="contentTitle">{ITEM_NAME}</h1>
+</div>
+
+<!-- IF INFO_TEXT != "" -->
+<div class="infobox infobox-large infobox-blue clearfix">
+	<i class="fa fa-info-circle fa-4x pull-left"></i> {INFO_TEXT}
+</div>
+<!-- ENDIF -->
+
+<form method="post" action="{ACTION}" name="post" enctype='multipart/form-data'>
+	<!-- BEGIN fieldsets -->
+	<fieldset class="settings mediumsettings">
+		<legend>{fieldsets.NAME}</legend>
+
+		<!-- BEGIN fields -->
+		<dl>
+			<dt><label>{fieldsets.fields.NAME}</label><br /><span>{fieldsets.fields.HELP}</span></dt>
+			<dd>{fieldsets.fields.FIELD}{fieldsets.fields.TEXT}</dd>
+		</dl>
+		<!-- END fields -->
+	</fieldset>
+	<!-- END fieldsets -->
+
+
+
+	<div class="contentFooter">
+		<input type="hidden" name="cid" value="{CID}" />
+		<button type="submit" name="save" class="mainoption"><i class="fa fa-check"></i>{L_save}</button>
+		<button type="reset" name="reset" class="liteoption"><i class="fa fa-trash-o"></i>{L_reset}</button>
+		<button type="button" class="liteoption" onclick="window.location='{EQDKP_CONTROLLER_PATH}ItemBase{SEO_EXTENSION}{SID}'"><i class="fa fa-chevron-left"></i>{L_back}</button>
+	</div>
+{CSRF_TOKEN}	
+</form>

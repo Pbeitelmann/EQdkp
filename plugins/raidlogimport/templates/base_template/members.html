@@ -1,0 +1,74 @@
+<!-- IF S_NORMAL_HEADER -->
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_raidlogimport}: {L_rli_check_data}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<!-- ENDIF -->
+
+<form method="post" action="{ACTION}" id="rli_import_form">
+	<div id='rli_nav_tabs'>
+		<ul>
+			<li><a href="#raids" id="rli_nav_raids"><span>{L_raids}</span></a><input type="hidden" name="checkraid" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#members" id="rli_nav_members"><span>{L_members}</span></a><input type="hidden" name="checkmem" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#items" id="rli_nav_items"><span>{L_items}</span></a><input type="hidden" name="checkitem" value="{L_update}" disabled="disabled" /></li>
+			<!-- IF not S_DEACTIVATE_ADJ -->
+				<li><a href="#adjustments" id="rli_nav_adjustments"><span>{L_adjustments}</span></a><input type="hidden" name="checkadj" value="{L_update}" disabled="disabled" /></li>
+			<!-- ENDIF -->
+			<li><a href="#viewall" id="rli_nav_viewall"><span>{L_rli_check_data}</span></a><input type="hidden" name="viewall" value="{L_update}" disabled="disabled" /></li>
+			<li><a href="#finish" id="rli_nav_finish"><span>{L_rli_finish}</span></a><input type="hidden" name="insert" value="{L_update}" disabled="disabled" /></li>
+		</ul>
+		<div id="raids">
+			<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+		</div>
+		<div id="members">
+			<table id="member_form" class="table fullwidth colorswitch">
+			<!-- IF DETAIL_RAIDLIST -->
+				<!-- INCLUDE detailed_members_raids.html -->
+			<!-- ELSE -->
+				<!-- INCLUDE members_raids.html -->
+			<!-- ENDIF -->
+			  <tr class="row2">
+				<td colspan="2">
+					<button type="button" id="add_mem_button" value="{L_rli_add_mem}" class="mainoption bi_new"><i class="fa fa-plus"></i> {L_rli_add_mem}</button>
+				</td>
+				<td class="row2" colspan="99">&nbsp;</td>
+			  </tr>
+			</table>
+			<table class="table fullwidth">
+			  <tr>
+				<th align="center" colspan="8">
+					<button type="submit" name="checkmem" value="{L_update}"><i class="fa fa-refresh"></i> {L_update}</button>
+					<button type="submit" name="checkitem" value="{L_rli_go_on}"><i class="fa fa-arrow-right"></i> {L_rli_go_on}</button>
+				</th>
+			  </tr>
+			</table>
+		</div>
+		<div id="items">
+			<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+		</div>
+		<!-- IF not S_DEACTIVATE_ADJ -->
+			<div id="adjustments">
+				<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+			</div>
+		<!-- ENDIF -->
+		<div id="viewall">
+			<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+		</div>
+		<div id="finish">
+			<span><i class="fa fa-refresh fa-lg fa-spin"></i> {L_rli_loading} </span>
+		</div>
+	</div>
+</form>
+<!-- IF CONTEXT_MENU -->
+<div id="myrcm" class="rli_rcm" style="display: none;">
+	<ul>
+		<li id="rli_add_dmem"><i class="fa fa-plus fa-lg"></i> {L_rli_add_time}</li>
+		<li id="rli_del_dmem"><i class="fa fa-trash-o fa-lg"></i> {L_rli_del_time}</li>
+		<li id="rli_swi_dmem"><i class="fa fa-refresh fa-lg"></i> {L_rli_standby_switch}</li>
+	</ul>
+</div>
+<!-- ENDIF -->

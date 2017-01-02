@@ -1,0 +1,418 @@
+<script type="text/javascript">
+	$(document).ready(function() {
+		$( "#dialog-edit-menuitem" ).dialog({
+			height: 380,
+			width: 500,
+			modal: true,
+			autoOpen: false,
+			close: function(){
+				close_menuitem();
+			}
+		});
+		
+		var visible_linktype =  'internal';
+		var last_action = '';
+		
+		$('.link_type').on('change', function(event){
+			if ($('.link_type').val() == 'internal'){
+				$('.internalLink').show();
+				$('.externalLink').hide();
+				$('.otherLinks').hide();
+				visible_linktype =  'internal';
+			} else {
+				if($('.link_type').val() == 'external') {
+					$('.internalLink').hide();
+					$('.externalLink').show();
+					$('.otherLinks').hide();
+					visible_linktype =  'external';
+				} else{
+					$('.otherLinks').hide();
+					$('.internalLink').hide();
+					$('.externalLink').hide();
+					
+					visible_linktype =  $('.link_type').val();
+	
+					$('.'+$('.link_type').val()).show();
+				}
+			}
+		});
+		
+		function close_menuitem(){
+			if (last_action === "add"){
+				$('#list_'+(newitemid-1)).remove();
+				last_action = '';
+			}
+		}
+		
+		function editMenuLink(){
+			$('.edit-menulink-trigger').on('click', function(event){
+				$('.link_type').val('external');
+				$('.link_type').trigger('change');
+				
+				var parent = $(this).parent();
+				var linkid = $(this).parent().attr('data-linkid');
+				
+				var url = $(this).siblings('.link-url').val();
+				var name = $(this).siblings('.link-name').val();
+				var window = $(this).siblings('.link-window').val();
+				var windowsize = $(this).siblings('.link-windowsize').val();
+				var visibility = $(this).siblings('.link-visibility').val();
+						
+				$('#editlink-button').val(linkid);
+				$('.editlink-name').val(name);
+				$('.editlink-url').val(url);
+				$('.editlink-window').val(window);
+				$('.editlink-windowsize').val(windowsize);
+
+				if (visibility != ""){
+					var objVis = JSON.parse(visibility);
+					$('#dw_editlink-visibility').val(objVis);
+					$('#dw_editlink-visibility').multiselect('refresh');
+				} else {
+					$('#dw_editlink-visibility').multiselect('uncheckAll');
+				}
+				last_action = "edit";
+				$( "#dialog-edit-menuitem" ).dialog( "open" );
+			});
+		}
+		
+		editMenuLink();
+		
+		$('#editlink-button').on('click', function(event){
+			var article = $('#editlink-article').val();
+			var linkid  = $('#editlink-button').val();
+			var container = $('div[data-linkid='+linkid+']');
+			
+			if (visible_linktype == "external") {
+				var name = $('.editlink-name').val();
+				var url = $('.editlink-url').val();
+				var window = $('.editlink-window').val();
+				var windowsize = $('.editlink-windowsize').val();
+				
+				var selectedVis = $('#dw_editlink-visibility').val();
+				var visibility = JSON.stringify(selectedVis);
+				
+				container.find('.link-url').val(url);
+				container.find('.link-name').val(name);
+				container.find('.link-window').val(window);
+				container.find('.link-windowsize').val(windowsize);
+				container.find('.link-visibility').val(visibility);
+				
+				container.find('.edit-menulink-trigger').html(name + ' ('+url+')');
+			} else {
+				if (visible_linktype == 'internal'){
+					var selected_text = $("#editlink-article option:selected").text();
+					$('#list_'+linkid).remove();
+					
+					var new_row = $('#addArticleItemTemplate').html()+"";
+					new_row = new_row.replace(/KEY/g, linkid);
+					new_row = new_row.replace(/HASH/g, article);
+					new_row = new_row.replace(/TEXT/g, selected_text);
+					$(".sortable").append('<li id="list_'+linkid+'" class="mjs-nestedSortable-leaf">'+new_row+'</li>');
+				
+					$('#list_'+linkid).find('.link-hide').remove();
+				} else {
+					article = $('#links_'+visible_linktype).val();
+					var selected_text = $('#links_'+visible_linktype+' option:selected').text();
+					$('#list_'+linkid).remove();
+					
+					var new_row = $('#addArticleItemTemplate').html()+"";
+					new_row = new_row.replace(/KEY/g, linkid);
+					new_row = new_row.replace(/HASH/g, article);
+					new_row = new_row.replace(/TEXT/g, selected_text);
+					$(".sortable").append('<li id="list_'+linkid+'" class="mjs-nestedSortable-leaf">'+new_row+'</li>');
+				
+				}
+
+				hide();
+			}
+			last_action = '';
+			$( "#dialog-edit-menuitem" ).dialog( "close" );
+		});
+		
+		function hide(){
+			$('.link-hide').unbind('click');
+			$('.link-hide').on('click', function(event){
+				if ($(this).hasClass('eye')){
+					//Hide
+					$(this).siblings('.link-hidden').val(1);
+					$(this).removeClass('eye');
+					$(this).addClass('eye-gray');
+					//Hide all children
+					$(this).closest('li').find('.link-hidden').val(1);
+					$(this).closest('li').find('.eye').addClass('eye-gray').removeClass('eye');
+				} else {
+					$(this).siblings('.link-hidden').val(0);
+					$(this).removeClass('eye-gray');
+					$(this).addClass('eye');
+				}
+			});
+		}
+		hide();
+
+		$('ol.sortable').nestedSortable({
+			forcePlaceholderSize: true,
+			handle: 'div',
+			helper:	'clone',
+			items: 'li',
+			opacity: .6,
+			placeholder: 'placeholder',
+			revert: 250,
+			tabSize: 25,
+			tolerance: 'pointer',
+			toleranceElement: '> div',
+			maxLevels: 3,
+
+			isTree: true,
+			expandOnHover: 700,
+		});
+		
+		var newitemid = {NEW_ID};
+		
+		$('#addMenuItem').on('click',function(event){
+			var new_row = $('#addMenuItemTemplate').html()+"";
+			new_row = new_row.replace(/KEY/g, newitemid);
+			$(".sortable").append('<li id="list_'+newitemid+'" class="mjs-nestedSortable-leaf">'+new_row+'</li>');
+			
+			editMenuLink();
+			hide();
+			$('.editlink-article').val('');
+			$('#editlink-button').val(newitemid);
+			$('.editlink-name').val('');
+			$('.editlink-url').val('');
+			$('.editlink-window').val(0);
+			$('.editlink-windowsize').val(4024);
+			$('#dw_editlink-visibility').val(0);
+			$('#dw_editlink-visibility').multiselect('refresh');
+			last_action = "add";
+			$( "#dialog-edit-menuitem" ).dialog( "open" );
+			
+			newitemid = newitemid + 1;
+		});
+		
+		
+		
+
+	});
+	
+	function delete_row(obj){
+		var container = $(obj).closest('div');
+		var siblings = container.siblings('ol');
+		var hidden = siblings.children('li:hidden').length;
+		var not_hidden = siblings.children('li').length;
+
+		if(not_hidden > 0 && (hidden < not_hidden)){
+			alert("{L_pluslink_delete_warning}");
+		} else {
+			$(obj).closest('li').remove();
+		}
+	}
+	
+	function softdelete_row(obj){
+		var container = $(obj).closest('div');
+		var siblings = container.siblings('ol');
+		var hidden = siblings.children('li:hidden').length;
+		var not_hidden = siblings.children('li').length;
+
+		if(not_hidden > 0 && (hidden < not_hidden)){
+			alert("{L_pluslink_delete_warning}");
+		} else {
+			$(obj).closest('li').find('.link-hidden').val(1);
+			$(obj).closest('li').hide();
+		}
+	}
+	
+	function delete_plink(pid, obj){
+		var container = $(obj).closest('div');
+		var siblings = container.siblings('ol');
+		var hidden = siblings.children('li:hidden').length;
+		var not_hidden = siblings.children('li').length;
+		
+		if(not_hidden > 0 && (hidden < not_hidden)){
+			alert("{L_pluslink_delete_warning}");
+		} else {
+			var value = $('#delete-pluslinks').val();
+			value = value + ',' + pid;
+			$('#delete-pluslinks').val(value);
+			$(obj).closest('li').hide();
+		}
+	}
+	
+	function serialize_menuitems(){
+		arraied = $('ol.sortable').nestedSortable('toArray');
+		$('#menuitems-serialized').val(JSON.stringify(arraied));
+		return true;
+	}
+</script>
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_manage_menus}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<div id="dialog-edit-menuitem" title="{L_pluslink_edit}" style="display:none;">
+			<fieldset class="settings mediumsettings">
+				<dl>
+					<dt><label>{L_link_type}:</label></dt>
+					<dd>
+						{DD_LINK_TYPE}
+					</dd>
+				</dl>
+				
+				<div class="internalLink">
+				<dl>
+					<dt><label>{L_category}/{L_article}:</label></dt>
+					<dd>
+						{DD_ARTICLES}
+					</dd>
+				</dl>
+				</div>
+				
+				<div class="externalLink" style="display:none;">
+					<dl>
+						<dt><label>{L_menu_entry}:</label></dt>
+						<dd>
+							<input type="text" style="width:90%" class="editlink-name"/>
+						</dd>
+					</dl>
+					<dl>
+						<dt><label>{L_link}:</label></dt>					
+						<dd><input type="text" style="width:90%" class="editlink-url"/></dd>
+					</dl>
+					<dl>
+						<dt><label>{L_pk_set_link_type_header}:</label></dt>
+						<dd>{DD_LINK_WINDOW}</dd>
+					</dl>
+					<dl>
+						<dt><label>{L_pluslink_frame_length}:</label></dt>
+						<dd><input size="4" type="text" class="editlink-windowsize"/>px</dd>
+					</dl>
+					<dl>
+						<dt><label>{L_info_opt_visibility}:</label></dt>
+						<dd>{MS_LINK_VISIBILITY}</dd>
+					</dl>
+				</div>
+				
+				<!-- BEGIN link_type_row -->
+				<div class="otherLinks {link_type_row.ID}" style="display:none;">
+					<dl>
+						<dt><label>{link_type_row.NAME}:</label></dt>
+						<dd>{link_type_row.DD}</dd>
+					</dl>
+				</div>
+				<!-- END link_type_row -->
+			</fieldset>
+			<button type="button" id="editlink-button"><i class="fa fa-check"></i> {L_submit}</button>
+	</div>
+
+<form method="post" action="{ACTION}" name="post" onsubmit="serialize_menuitems();" id="manage_menu_form">
+<div id='menu_tabs'>
+	<ul>
+		<li><a href='#menu'>{L_info_opt_ml_1}</a></li>
+		<li><a href="#admin">{L_favorits_admin_menu}</a></li>
+	</ul>
+<div id="menu">
+	<div class="contentHeader">
+		<h1 class="contentTitle">{L_info_opt_ml_1}</h1>
+	</div>
+	
+	<div class="infobox infobox-large infobox-blue clearfix">
+		<i class="fa fa-info-circle fa-4x pull-left"></i> {L_menus_info}
+	</div>
+	
+	{MENU_OL}
+	<input type="hidden" value="" id="menuitems-serialized" name="serialized"/>
+	<input type="hidden" value="0" id="delete-pluslinks" name="del_pluslinks"/>
+	<button type="button" id="addMenuItem"><i class="fa fa-plus"></i>{L_pluslink_add}</button>
+	
+	<div id="addMenuItemTemplate" style="display:none;">
+		<div data-linkid="KEY">
+			<span class="ui-icon ui-icon-arrowthick-2-n-s" title="{L_dragndrop}" style="display:inline-block;"></span>&nbsp;
+			<span class="link-hide eye"></span>&nbsp;
+			<a href="javascript:void(0);" class="edit-menulink-trigger">Neuer Link</a> <i class="fa fa-trash-o fa-lg hand" title="{L_delete}" onclick="delete_row(this);"></i>
+			<input type="hidden" value=""  name="mainmenu[KEY][url]" class="link-url">
+			<input type="hidden" value=""  name="mainmenu[KEY][name]" class="link-name">
+			<input type="hidden" value=""  name="mainmenu[KEY][window]" class="link-window">
+			<input type="hidden" value="4024"  name="mainmenu[KEY][windowsize]" class="link-windowsize">
+			<input type="hidden" value='["0"]'  name="mainmenu[KEY][visibility]" class="link-visibility">
+			<input type="hidden" value="KEY"  name="mainmenu[KEY][specialid]" class="link-specialid">
+
+			<input type="hidden" value="pluslink"  name="mainmenu[KEY][type]" class="link-type">			
+			<input type="hidden" value="0"  name="mainmenu[KEY][hidden]" class="link-hidden">
+			<input type="hidden" value="new"  name="mainmenu[KEY][id]" class="link-id">
+		</div>
+	</div>
+	
+	<div id="addArticleItemTemplate" style="display:none;">
+		<div data-linkid="KEY">
+			<span class="ui-icon ui-icon-arrowthick-2-n-s" title="{L_dragndrop}" style="display:inline-block;"></span>&nbsp;
+			<span class="link-hide eye"></span>&nbsp;
+			TEXT <i class="fa fa-trash-o fa-lg hand" title="{L_delete}" onclick="softdelete_row(this);"></i>
+			<input type="hidden" value="normal"  name="mainmenu[KEY][type]" class="link-type">			
+			<input type="hidden" value="0"  name="mainmenu[KEY][hidden]" class="link-hidden">
+			<input type="hidden" value="HASH"  name="mainmenu[KEY][id]" class="link-id">
+		</div>
+	</div>
+
+</div>
+
+
+<div id="admin">
+	<div class="contentHeader">
+		<h1 class="contentTitle">{L_favorits_admin_menu}</h1>
+	</div>
+
+	<div class="infobox infobox-large infobox-blue clearfix">
+		<i class="fa fa-info-circle fa-4x pull-left"></i> {L_favorits_info}
+	</div>
+	<br />
+	<div>
+		<div class="not-sortable"><i class="fa fa-star fa-lg not-sortable"></i> {L_favorits}:</div>
+		<ul class="receiver connectedSortable5 manage_menues_block2" id="sortable9" style="min-height:120px;">
+		<!-- BEGIN fav_row -->
+			<li class="t_{fav_row.IDENT}" id="{fav_row.ID}" title="{fav_row.GROUP}">
+				{fav_row.ICON} {fav_row.NAME}
+				<input name="fav[]" type="checkbox" id="cb_{fav_row.ID}" value="{fav_row.DATA}" style="display:none;" />
+				<span id="icon_{fav_row.ID}" style="display:none;">{fav_row.ICON}</span>
+				<i class="fa fa-trash-o fa-lg hand not-sortable" onclick="removeThis(this.parentNode.id); 	$(this).parent().remove();"></i>
+			</li>
+		<!-- END fav_row -->
+		<!-- IF S_NO_FAVS -->
+			<li class="t_default" id="default_li">{L_no_favs_message}</li>
+		<!-- ENDIF -->
+		</ul>
+	</div>
+	<div class="connectedSortable5" id="sortable10" >
+		<!-- BEGIN group_row -->
+		<div class="manage_menues_block connector" style="float:left;">
+			<!-- BEGIN menu_row -->
+			<div id="container_{group_row.menu_row.IDENT}">
+				<div class="not-sortable toggle_button">
+					<span class="togglebutton_name center">{group_row.menu_row.NAME}</span>
+				</div>
+				<div id="tt_{group_row.menu_row.IDENT}" class="toggle_container equalHeights">
+					<ul>
+						<!-- BEGIN item_row -->
+						<li class="t_{group_row.menu_row.IDENT}" id="{group_row.menu_row.item_row.ID}" title="{group_row.menu_row.GROUP}">{group_row.menu_row.item_row.ICON} {group_row.menu_row.item_row.NAME}
+							<input type="checkbox" id="cb_{group_row.menu_row.item_row.ID}" name="fav[]" value="{group_row.menu_row.item_row.DATA}" style="display:none;" />
+						</li>
+						<!-- END item_row -->
+					</ul>
+				</div>
+			</div>
+			<!-- END menu_row -->
+		</div>
+		<!-- END group_row -->
+	</div>
+	<div class="clear"></div>
+</div> <!-- close admin-div -->
+</div>
+<div class="contentFooter">
+	<button type="submit"  name="save" class="mainoption" id="save"><i class="fa fa-check"></i>{L_save}</button>
+	<button type="button"  name="save" class="mainoption" onclick="window.location='manage_menus.php{SID}'"><i class="fa fa-trash-o"></i>{L_reset}</button>
+</div>
+{CSRF_TOKEN}
+</form>

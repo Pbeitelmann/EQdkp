@@ -1,0 +1,360 @@
+<script type='text/javascript'>
+//<![CDATA[
+function openAddTemplate(){
+	$( "#dialog-add-template" ).dialog( "open" );
+}
+
+$(document).ready(function() {
+	$( "#dialog-add-template" ).dialog({
+		height: 200,
+		width: 400,
+		modal: true,
+		autoOpen: false,
+	});
+
+	$("#repeat_dd").change(function(){
+		var ddvalue = $(this).val();
+		if(ddvalue == 'custom'){
+			$('#repeating').val($('#repeating').data('savedvalue'));
+			$('#custom_repeat_div').show();
+		}else{
+			$('#repeating').val(ddvalue);
+			$('#custom_repeat_div').hide()
+		}
+
+	}).trigger('change');
+
+	$("input[type='checkbox'][name='private']").change(function() {
+		console.log($(this).prop('checked'));
+		if($(this).prop('checked') == true){
+			$("#invitefield").show();
+		}else{
+			$("#invitefield").hide();
+		}
+	});
+
+	$('#addtemplate-button').on('click', function(){
+		var templatename = $('#mytemplatename').val();
+		$( "#dialog-add-template" ).dialog( "close" );
+		if (templatename != ""){
+			$('#templatename').val(templatename);
+			$('#addtemplate-submitbtn').click();
+		}
+	})
+
+	$('#selectmode').change(function() {
+		if($(this).val() == 'raid'){
+			changeCalendars('1');
+			$('.raid').show();
+			$('.event').hide();
+			$('#eventsettings').addClass('floatLeft');
+			$('#eventsettings').width("540px");
+		}else{
+			$('.raid').hide();
+			changeCalendars('2');
+			$('.event').show();
+			$('#eventsettings').removeClass('floatLeft');
+			$('#eventsettings').width("98%");
+		}
+	});
+
+	// switch the raid distri modes
+	$('#cal_raidmodeselect').change(function() {
+		$('#raidmode_class').hide();
+		$('#raidmode_role').hide();
+		$('#raidmode_seperator').hide();
+		$('#attendees_summ').attr('readonly', true);
+		$('#attendees_summ').val(0);
+		$('.attendees_count').attr('disabled', true);
+		if($(this).val() == 'none'){
+			$('#attendees_summ').val('{ATTENDEE_COUNT}');
+			$('#attendees_summ').attr('readonly', false);
+		}else if($(this).val() == 'role'){
+			$('#raidmode_role').show();
+			$('#raidmode_seperator').show();
+			$('#raidmode_role').find('.attendees_count').attr('disabled', false);
+		}else{
+			$('#raidmode_class').show();
+			$('#raidmode_seperator').show();
+			$('#raidmode_class').find('.attendees_count').attr('disabled', false);
+		}
+	});
+
+	$("input[type='checkbox'][name='allday']").change(function() {
+		if($('#selectmode').val() == 'event'){
+		if($(this).prop('checked') == true){
+			$('#cal_startdate').datetimepicker('disableTimepicker');
+			$('#cal_enddate').datetimepicker('disableTimepicker');
+		}else{
+			$('#cal_startdate').datetimepicker('enableTimepicker');
+			$('#cal_enddate').datetimepicker('enableTimepicker');
+		}
+		}
+	}).trigger('change');
+
+	// the onpageload state
+	if($('#selectmode').val() != ''){
+		$('#selectmode').trigger('change');
+	}
+	if($('#cal_raidmodeselect').val() != 'class'){
+		$('#cal_raidmodeselect').trigger('change');
+	}
+
+	// calculate the attendee count summ
+	$(document).on('change', '.attendees_count, #cal_raidmodeselect', function(){
+		attendeeCount();
+	});
+
+	// Load the raid template if selected
+	$("#cal_raidtemplate").bind("change", function(e){
+		$(".resettemplate_input").val('');
+		if($(this).val() != ''){
+			$.getJSON("{EQDKP_CONTROLLER_PATH}editcalendarevent{SEO_EXTENSION}{SID}&loadtemplate="+$(this).val(), function(data){
+				$.each(data, function(i,item){
+					$("#"+item.field).val(item.value);
+					if(item.field == 'selectmode'){
+						$('#selectmode').easyDropDown('select', item.value)
+						$('#selectmode').trigger('change');
+					}
+				});
+				$("#dw_raidleader").multiselect("refresh");
+				$('#cal_raidmodeselect').trigger('change');
+			});
+		}
+	});
+
+	// Delete templates
+	$("#template_delbutton").bind("click", function(){
+		if ($("#cal_raidtemplate").val().match("^t_")) {
+			$.get('{EQDKP_CONTROLLER_PATH}editcalendarevent{SEO_EXTENSION}{SID}&link_hash={CSRF_DELETETEMPLATE}&deletetemplate='+$("#cal_raidtemplate").val().slice(2), function(data) {
+				$('#cal_raidtemplate').find('option').remove();
+				$('#cal_raidtemplate').append(data);
+			});
+		}
+	});
+
+	// the manual form validation
+	$('#submittheform').click(function(){
+
+		if($('#selectmode').val() == 'raid'){
+			if(($('input[name="raid_attendees_count"]').val() < 1) || ($('input[name="raid_attendees_count"]').val() == '0')){
+				ModalAlert({L_raidevent_event_val_attnd|jsencode});
+				return false;
+			}
+			if(($('input[name="raid_eventid"]').val() == '') || ($('input[name="raid_eventid"]').val() < 1)){
+				ModalAlert({L_raidevent_event_val_name|jsencode});
+				return false;
+			}
+		}else{
+			var dv_eventname = $('input[name="eventname"]').val();
+			if(dv_eventname.length < 3){
+				ModalAlert({L_raidevent_event_val_name|jsencode});
+				return false;
+			}
+			if($('input[name="calendar_id"]').val() < 1){
+				ModalAlert({L_raidevent_raid_val_eventid|jsencode});
+				return false;
+			}
+		}
+		$('#addeventform').submit();
+	});
+
+	//Onload: Count attendees, e.g. required when editing an raid
+	if($('#cal_raidmodeselect').val() != 'none'){
+		attendeeCount();
+	}
+});
+
+function changeCalendars(cal_mode){
+	calendars		= {DR_CALENDAR_JSON};
+	selected_calid	= {DR_CALENDAR_CID};
+
+	var cal_options = '';
+	$.each(calendars, function() {
+		if(this.type == cal_mode){
+			cal_option_selected	= (selected_calid > 0 && this.id == selected_calid) ? 'selected="selected"' : '';
+			cal_options += '<option value="' + this.id + '" '+cal_option_selected+'>' + this.name + '</option>';
+		}
+	});
+	$('#calendar_id').html(cal_options);
+
+	// check if a calendar is available for this mode
+	if ($('#calendar_id option').length == 0) {
+		ModalAlert({L_raidevent_raid_val_addevent|jsencode});
+	}
+}
+
+function ModalAlert(text){
+	$( "<div></div>" ).dialog({
+			height: 200,
+			modal: true,
+			title: {L_raidevent_raid_errorhead|jsencode},
+			buttons: { Ok: function() { $(this).dialog('close'); } }
+		}).html('<p class="confirmdialog"><i class="fa fa-exclamation-triangle fa-2x" style="float:left; margin:0 7px 24px 0;"></i>'+text+'</p>');
+}
+
+function attendeeCount(){
+	var calcsumm = 0;
+	$('.attendees_count').each(function(index) {
+		if(!$(this).attr("disabled")) {
+			calcsumm += parseInt($(this).val());
+		}
+	});
+	$('#attendees_summ').val(calcsumm);
+}
+//]]>
+</script>
+<form method="post" action="{ACTION}" name="addeventform" id="addeventform">
+	<input type="hidden" name="eventid" value="{EVENT_ID}" />
+
+	<!-- IF IS_CLONED -->
+	<div class="infobox infobox-large infobox-blue clearfix">
+		<i class="fa fa-retweet fa-4x pull-left"></i> {L_calendar_event_clones_info}<br/>{RADIO_EDITCLONES}
+	</div>
+	<!-- ENDIF -->
+
+	<fieldset class="settings mediumsettings floatLeft" id="eventsettings" style="width: 540px;">
+		<legend>{DR_CALENDARMODE}</legend>
+		<dl>
+			<dt><label>{L_raidevent_template}</label></dt>
+			<dd>{DR_TEMPLATE}
+				<button type="button" name="delete_template" id="template_delbutton"><i class="fa fa-trash-o"></i></button>
+			</dd>
+		</dl>
+		<hr />
+		<dl>
+			<dt><label>{L_calendar}:</label></dt>
+			<dd>
+				<select size="1" name="calendar_id" id="calendar_id" class="input">
+					<option value=""></option>
+				</select>
+			</dd>
+		</dl>
+		<dl class="event">
+			<dt><label>{L_calendar_event_name}:</label></dt>
+			<dd><input type="text" name="eventname" value="{EVENTNAME}" class="input resettemplate_input {required:true, messages:{required:'{L_raidevent_event_val_name}'}" /></dd>
+		</dl>
+		<dl class="raid">
+			<dt><label>{L_raidevent_raidevent}:</label></dt>
+			<dd>
+				<span id="raidevent_dropdown">{DR_EVENT}</span>
+				<button type="button" name="add_event" onclick="AddEventDialog()"><i class="fa fa-plus"></i></button>
+			</dd>
+		</dl>
+		<!-- IF DKP_ENABLED -->
+		<dl class="raid">
+			<dt><label>{L_raidevent_value}:</label></dt>
+			<dd><input type="text" name="raid_value" size="8" maxlength="7" value="{RAID_VALUE}" class="input resettemplate_input" id="input_dkpvalue" /> {HELP_VALUE}</dd>
+		</dl>
+		<!-- ENDIF -->
+		<dl class="raid">
+			<dt><label>{L_raidevent_raidleader}:</label></dt>
+			<dd>{DR_RAIDLEADER}</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_calendar_date}:</label></dt>
+			<dd>{JQ_DATE_START} - {JQ_DATE_END}</dd>
+		</dl>
+		<dl class="event">
+			<dt><label>{L_calendar_allday_event}:</label></dt>
+			<dd>{CB_ALLDAY}</dd>
+		</dl>
+		<dl class="raid">
+			<dt><label>{L_calendar_deadline}:</label></dt>
+			<dd><input type="text" name="deadlinedate" id="deadlinedate" class="core-spinner" data-min="0" size="5" maxlength="255" value="{DATE_DEADLINE}" /> {L_calendar_deadline_entity}</dd>
+		</dl>
+		<dl class="event">
+			<dt><label>{L_calendar_location}:</label></dt>
+			<dd><input type="text" name="location" id="location"maxlength="255" value="{LOCATION}" /></dd>
+		</dl>
+		<dl>
+			<dt><label>{L_calendar_repeat}:</label></dt>
+			<dd>{DR_REPEAT}
+				<span id="custom_repeat_div">
+					<input type="text" name="repeating" value="{REPEAT_CUSTOM}" data-savedvalue="{REPEAT_CUSTOM}" class="input" id="repeating" /> {L_days}
+				</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_note}:</label></dt>
+			<dd>{BBCODE_NOTE}</dd>
+		</dl>
+
+		<!-- IF not IS_EDIT -->
+		<hr />
+		<dl class="raid">
+			<dt><label>{L_raidevent_autogroups}:</label></dt>
+			<dd>{DR_GROUPS} {DR_STATUS}</dd>
+		</dl>
+		<!-- ENDIF -->
+
+		<dl class="event">
+			<dt><label>{L_calendar_event_private}:</label></dt>
+			<dd>{CB_PRIVATE}</dd>
+		</dl>
+		<dl id="invitefield" style="display:none;">
+			<dt><label>{L_calendar_sharing_receipients}:</label></dt>
+			<dd>{DR_SHARE_USERS}</dd>
+		</dl>
+
+	</fieldset>
+
+	<fieldset class="settings floatRight raid" style="width: 310px;">
+		<legend>{L_raidevent_attendees}</legend>
+		<dl>
+			<dt><label><i class="fa fa-cogs fa-lg"></i> {L_calendar_distri}:</label></dt>
+			<dd>{DR_RAIDMODE}</dd>
+		</dl>
+		<dl>
+			<dt><label><i class="fa fa-group fa-lg"></i> {L_raidevent_attendees}:</label></dt>
+			<dd><input type="text" size="3" maxlength="2" name="raid_attendees_count" value="{ATTENDEE_COUNT}" readonly="readonly" id="attendees_summ" /></dd>
+		</dl>
+		<div id="raidmode_class">
+			<hr />
+			<!-- BEGIN raid_classes -->
+			<dl>
+				<dt><label class="class_{raid_classes.CLSSID}">{raid_classes.ICON} {raid_classes.LABEL}:</label></dt>
+				<dd><input type="text" size="3" maxlength="2" name="{raid_classes.NAME}" value="{raid_classes.COUNT}" class="attendees_count" id="inp_class_{raid_classes.CLSSID}" {raid_classes.DISABLED} /></dd>
+			</dl>
+			<!-- END raid_classes -->
+		</div>
+
+		<div id="raidmode_role" style="display:none;">
+			<hr />
+			<!-- BEGIN raid_roles -->
+			<dl>
+				<dt><label>{raid_roles.ICON} {raid_roles.LABEL}:</label></dt>
+				<dd><input type="text" size="3" maxlength="2" name="{raid_roles.NAME}" value="{raid_roles.COUNT}" class="attendees_count" id="inp_role_{raid_roles.CLSSID}" {raid_roles.DISABLED} /></dd>
+			</dl>
+			<!-- END raid_roles -->
+		</div>
+	</fieldset>
+	<div class="clear"></div>
+
+	<!-- IF IS_EDIT -->
+		<button type="submit" name="upd" class="mainoption"><i class="fa fa-check"></i>{L_calendars_upd_button}</button>
+		<button type="button" class="liteoption raid" onclick="openAddTemplate();"><i class="fa fa-clipboard"></i>{L_raidevent_savetemplate}</button>
+		<button type="submit" name="addtemplate" class="liteoption displayNone" id="addtemplate-submitbtn"></button>
+	<!-- ELSE -->
+		<input type="hidden" name="addevent"/>
+		<button type="submit" name="addevent" id="submittheform" class="mainoption"><i class="fa fa-check"></i>{L_calendars_add_button}</button>
+		<button type="button" class="liteoption raid" onclick="openAddTemplate();"><i class="fa fa-clipboard"></i>{L_raidevent_savetemplate}</button>
+		<button type="submit" name="addtemplate" class="liteoption displayNone" id="addtemplate-submitbtn"></button>
+		<button type="reset"  name="reset" class="liteoption"><i class="fa fa-trash-o"></i>{L_reset}</button>
+	<!-- ENDIF -->
+
+	<input type="hidden" name="templatename" value="{TEMPLATE_NAME}" class="input resettemplate_input" id="templatename" />
+{CSRF_TOKEN}
+</form>
+
+<div id="dialog-add-template" title="{L_raidevent_savetemplate}" style="display:none;">
+			<fieldset class="settings mediumsettings">
+				<dl>
+					<dt><label>{L_name}:</label></dt>
+					<dd>
+						<input type="text" id="mytemplatename" style="width: 90%"/>
+					</dd>
+				</dl>
+			</fieldset>
+		<button type="button" id="addtemplate-button"><i class="fa fa-check"></i> {L_submit}</button>
+</div>

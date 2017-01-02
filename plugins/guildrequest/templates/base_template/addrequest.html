@@ -1,0 +1,202 @@
+<script>
+function gr_dep_check_value(name, value, target){
+	if ($("#"+name).val() == value){
+		$("#"+target).show();
+	} else {
+		gr_hide_target(target);
+	}
+}
+
+function gr_dep_check_cb(name, value, target){
+	if ($("input[name^='"+name+"["+value+"]'").is(":checked")){
+		$("#"+target).show();
+	} else {
+		gr_hide_target(target);
+	}
+}
+	
+function gr_dep_check_radio(name, value, target){
+	if ($("input[name="+name+"]:checked").val() == value){
+		$("#"+target).show();
+	} else {
+		gr_hide_target(target);
+	}
+}
+
+function gr_hide_target(target){
+	$("#"+target).hide();
+	$("#"+target+" input[type=checkbox]").removeAttr("checked");
+	$("#"+target+" input[type=checkbox]").trigger("change");
+	$("#"+target+" input[type=radio]").removeAttr("checked");
+	$("#"+target+" input[type=radio]").trigger("change");
+	$("#"+target+" select").val("");
+	$("#"+target+" select").trigger("change");
+}
+
+var field_data = new Array();
+$(document).ready(function(){
+	
+	<!-- IF S_USERNAME_CHECK -->
+	
+	$("input[name^='gr_field'], select[name^='gr_field'], textarea[name^='gr_field']").on("change", function(){
+		gr_listener();
+	});
+	gr_listener();
+	
+	$('#gr_name').after('<i class="fa fa-check fa-lg icon-color-green" id="tick_username" style="display:none;"></i><span id="error_username" class="error-message-red" style="display:none;"><i class="fa fa-exclamation-triangle fa-lg"></i> '+{L_fv_username_alreadyuse|jsencode}+'</span>');
+	$('#gr_email').after('<i class="fa fa-check fa-lg icon-color-green" id="tick_mail" style="display:none;" ></i><span id="error_email" class="error-message-red" style="display:none;"><i class="fa fa-exclamation-triangle fa-lg"></i> '+{L_fv_email_alreadyuse|jsencode}+'</span>');
+	
+	$('#gr_name').change(function() {
+		var username = $(this).val();
+		if(username.length > 0){
+			$.post("{EQDKP_CONTROLLER_PATH}Register/{SID}&ajax=1{AJAXEXTENSION_USER}", { username: username }, function(result){
+				if(result == 'true'){
+					$("#error_username").hide();
+					$("#tick_username").show();
+				}else{
+					errortext	= $("#error_username").html();
+					$('#error_username').html(errortext.replace(new RegExp("\\{0\\}", "g"), username));
+					$("#tick_username").hide();
+					$("#error_username").show();
+				}
+			});
+		}else{
+			$("#tick_username").hide();
+			$("#error_username").hide();
+		}
+	});
+
+	$('#gr_email').change(function() {
+		var user_email = $(this).val();
+		if(user_email.length > 0){
+			$.post("{EQDKP_CONTROLLER_PATH}Register/{SID}&ajax=1{AJAXEXTENSION_USER}", { user_email: user_email }, function(result){
+				if(result == 'true'){
+					$("#error_email").hide();
+					$("#tick_mail").show();
+				}else{
+					errortext	= $("#error_email").html();
+					$('#error_email').html(errortext.replace(new RegExp("\\{0\\}", "g"), user_email));
+					$("#tick_mail").hide();
+					$("#error_email").show();
+				}
+			});
+		}else{
+			$("#tick_mail").hide();
+			$("#error_email").hide();
+		}
+	});
+	
+	<!-- ENDIF -->
+
+})
+
+function gr_listener(){
+	$("input[name^='gr_field']").each(function(e){
+		var name = $(this).attr("name");
+		var type = $(this).attr("type");
+		
+		if (type == "radio") field_data[name] = $("input[name="+name+"]:checked").val();
+		if (type == "text") field_data[name] = $("input[name="+name+"]").val();
+		if (type == "checkbox"){
+			
+			if ($(this).is(":checked")) {
+				field_data[name] = 1;
+			} else {
+				field_data[name] = 0;
+			}
+		}
+	})
+	$("select[name^='gr_field']").each(function(e){
+		var name = $(this).attr("name");
+		var type = $(this).attr("type");
+
+		field_data[name] = $("select[name="+name+"]").val();
+	})
+	$("textarea[name^='gr_field']").each(function(e){
+		var name = $(this).attr("name");
+		var type = $(this).attr("type");
+
+		field_data[name] = $("textarea[name="+name+"]").val();
+	})
+
+	<!-- BEGIN gr_listener_row -->
+	if ({gr_listener_row.EXPR}){
+		$("#{gr_listener_row.TARGET}").show();
+	} else {
+		gr_hide_target("{gr_listener_row.TARGET}");
+	}
+	<!-- END gr_listener_row -->	
+}
+
+</script>
+
+<!-- IF S_USERNAME_CHECK -->
+<style>
+input[name='gr_name'], input[name='gr_email']{
+	width: 90% !important;
+}
+</style>
+<!-- ENDIF -->
+
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li class="current"><a>{L_gr_add}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<div class="contentHeader">
+	<h1 class="contentTitle">{L_gr_add}</h1>
+</div>
+
+<!-- IF S_HAS_APPLICATIONS -->
+<div class="tableHeader floatRight">
+	<button onclick="window.location='{EQDKP_CONTROLLER_PATH}MyApplications{SEO_EXTENSION}{SID}'"><i class="fa fa-user fa-lg"></i> {L_gr_myapplications}</button>
+</div>
+<div class="clear"></div>
+<!-- ENDIF -->
+
+<form method="post" action="">
+	<!-- BEGIN tabs -->
+		<div>
+		
+			<!-- BEGIN fieldset -->
+
+			<fieldset class="settings gr_{tabs.fieldset.ID}" id="{tabs.fieldset.FID}">
+				<legend>{tabs.fieldset.NAME}</legend>
+				<!-- BEGIN field -->
+				<dl id="{tabs.fieldset.field.ID}">
+					<!-- IF tabs.fieldset.field.S_NO_DIVIDER -->
+					{tabs.fieldset.field.NAME}
+					<!-- ELSE -->
+					<dt><label>{tabs.fieldset.field.NAME} <!-- IF tabs.fieldset.field.REQUIRED -->*<!-- ENDIF --></label>
+					<br /><span>{tabs.fieldset.field.HELP}</span>
+					</dt>
+					<dd>{tabs.fieldset.field.FIELD}</dd>
+					<!-- ENDIF -->
+				</dl>
+				<!-- END field -->
+			</fieldset>
+			
+			<!-- END fieldset -->
+		</div>
+		<!-- END tabs -->
+	<!-- IF S_DISPLAY_CATPCHA -->
+	<div id="captcha">
+		<fieldset class="settings">
+			<legend>{L_lib_captcha_head}</legend>
+			<dl>
+				<dt>
+					<label>{L_lib_captcha_head} *</label>
+				</dt>
+				<dd>{FV_CAPTCHA}
+				{CAPTCHA}</dd>
+			</dl>
+		</fieldset>
+	</div>
+	<!-- ENDIF -->
+	<button type="submit" name="save"><i class="fa fa-check"></i>{L_gr_submit_request}</button>
+	<button type="reset"><i class="fa fa-trash-o"></i>{L_reset}</button>
+	
+{CSRF_TOKEN}
+</form>

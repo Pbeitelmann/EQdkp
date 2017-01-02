@@ -1,0 +1,42 @@
+<form method="post" action="{ACTION}" name="addWC">
+<input type="hidden" name="auction" value="{AUCTIONID}">
+
+<fieldset class="settings mediumsettings">
+	<legend id="header_name">
+		<!-- IF S_EDIT -->{L_gb_auction_head_edit}<!-- ELSE -->{L_gb_auction_head_add}<!-- ENDIF -->
+	</legend>
+	
+	<dl>
+		<dt><label>{L_gb_auction_item}:</label><br /><span>{L_gb_auction_item_help}</span></dt>
+		<dd><!-- IF S_EDIT -->{ITEM_DD}<!-- ELSE -->{ITEM_MS}<!-- ENDIF --></dd>
+	</dl>
+	<dl>
+		<dt><label>{L_gb_auction_startdate}:</label></dt>
+		<dd>{STARTDATE}</dd>
+	</dl>
+	<dl>
+		<dt><label>{L_gb_auction_duration}:</label><br /><span>{L_gb_auction_duration_help}</span></dt>
+		<dd>{DURATION}</dd>
+	</dl>
+	<dl>
+		<dt><label>{L_gb_auction_startvalue}:</label></dt>
+		<dd>{STARTVALUE}</dd>
+	</dl>
+	<dl>
+		<dt><label>{L_gb_auction_bidsteps}:</label><br /><span>{L_gb_auction_bidsteps_help}</span></dt>
+		<dd>{BIDSTEPS}</dd>
+	</dl>
+	<dl>
+		<dt><label>{L_gb_auction_multidkppool}:</label><br /><span>{gb_auction_multidkppool_help}</span></dt>
+		<dd>{MULTIDKPPOOL}</dd>
+	</dl>
+	<dl>
+		<dt><label>{L_gb_auction_raidatt}:</label><br /><span>{L_gb_auction_raidatt_help}</span></dt>
+		<dd>{RAIDATTENDANCE}</dd>
+	</dl>
+</fieldset>
+<button class="mainoption" type="submit" name="save">
+	<i class="fa fa-check"></i> <!-- IF S_TRANSACT -->{L_gb_addtrans_button}<!-- ELSE -->{L_gb_additem_button}<!-- ENDIF -->
+</button>
+{CSRF_TOKEN}
+</form>

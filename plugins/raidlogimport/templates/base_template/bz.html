@@ -1,0 +1,118 @@
+<!-- IF S_NORMAL_HEADER -->
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_raidlogimport}: {L_rli_bz_bz}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<!-- ENDIF -->
+
+<div class="tableHeader floatRight">
+	<button type="submit" name="upd" value="{L_bz_update}" class="mainoption" /><i class="fa fa-plus"></i> {L_bz_update}</button>
+</div>
+<div class="clear"></div>
+<form action="{ACTION}" method="post" name="post">
+	<div id="rli_manage_bz">
+		<ul>
+			<li><a href='#fragment-1'><span>{L_rli_bz_abz}</span></a></li>
+			<li><a href='#fragment-2'><span>{L_rli_bz_ibz}</span></a></li>
+		</ul>
+		<div id="fragment-1">
+			<table class="table fullwidth ">
+				<tr>
+					<th width="9"></th><th width='35%'>{L_bz_string}</th><th width='35%'>{L_bz_note_event}</th><th width="13%">{L_bz_bonus}</th><th>{L_bz_timebonus}</th>
+				</tr>
+				<!-- BEGIN zone_list -->
+				<tr>
+					<td colspan="5">
+						<div id="zone_{zone_list.ZID}">
+						<table class="table fullwidth">
+							<tr>
+								<th width="9"><!-- IF zone_list.ZID --><input type="checkbox" name="bz_ids[]" value="z{zone_list.ZID}" /><!-- ENDIF --></th>
+								<th width="34%"><div class="toggle_button"><span class="togglebutton_name">{zone_list.ZSTRING}</span></div></th>
+								<th width="35%">{zone_list.ZNOTE}</th>
+								<th width="13%">{zone_list.ZVAL}</th>
+								<th>{zone_list.ZTIMEBONUS}</th>
+							</tr>
+							<!-- BEGIN boss_list -->
+							<tr>
+								<td colspan="5" class="toggle_container">
+									<table class="table fullwidth colorswitch">
+										<tr>
+											<td width="20" align="center"><input type="checkbox" name="bz_ids[]" value="b{zone_list.boss_list.BID}" /></td>
+											<td width="35%">{zone_list.boss_list.BSTRING}</td>
+											<td width="35%">{zone_list.boss_list.BNOTE}</td>
+											<td width="13%">{zone_list.boss_list.BBONUS}</td>
+											<td>{zone_list.boss_list.BTIMEBONUS}</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<!-- END boss_list -->
+						</table>
+						</div>
+					</td>
+				</tr>
+				<!-- END zone_list -->
+			</table>
+		</div>
+		<div id="fragment-2">
+			<table class="table fullwidth">
+				<tr>
+					<th width="10"></th><th width='35%'>{L_bz_string}</th><th width='35%'>{L_bz_note_event}</th><th>{L_bz_bonus}</th><th>{L_bz_timebonus}</th>
+				</tr>
+				<!-- BEGIN inactive_zone_list -->
+				<tr>
+					<td colspan="5">
+						<div id="zone_{inactive_zone_list.ZID}">
+						<table class="table fullwidth">
+							<tr>
+								<th width="10"><!-- IF inactive_zone_list.ZID --><input type="checkbox" name="bz_ids[]" value="z{inactive_zone_list.ZID}" /><!-- ENDIF --></th>
+								<th width="35%"><div class="toggle_button"><span class="togglebutton_name">{inactive_zone_list.ZSTRING}</span></div></th>
+								<th width="35%">{inactive_zone_list.ZNOTE}</th>
+								<th>&nbsp;</th>
+								<th>{inactive_zone_list.ZTIMEBONUS}</th>
+							</tr>
+							<!-- BEGIN inactive_boss_list -->
+							<tr>
+								<td colspan="5">
+									<div class="toggle_container">
+									<table class="table fullwidth colorswitch">
+										<tr>
+											<td width="10"><input type="checkbox" name="bz_ids[]" value="b{inactive_zone_list.inactive_boss_list.BID}" /></td>
+											<td width="35%">{inactive_zone_list.inactive_boss_list.BSTRING}</td>
+											<td width="35%">{inactive_zone_list.inactive_boss_list.BNOTE}</td>
+											<td>{inactive_zone_list.inactive_boss_list.BBONUS}</td>
+											<td>{inactive_zone_list.inactive_boss_list.BTIMEBONUS}</td>
+										</tr>
+									</table>
+									</div>
+								</td>
+							</tr>
+							<!-- END inactive_boss_list -->
+						</table>
+						</div>
+					</td>
+				</tr>
+				<!-- END inactive_zone_list -->
+			</table>
+		</div>
+	</div>
+	<table class="table fullwidth">
+		<tr>
+			<th colspan="5">
+				<button type="submit" name="upd" value="{L_bz_update}" class="mainoption" /><i class="fa fa-plus"></i> {L_bz_update}</button>
+				<button type="button" name="del" value="{L_bz_delete}" class="mainoption" onclick="delete_warning();" /><i class="fa fa-times"></i> {L_bz_delete}</button>
+				<button  type="submit" name="inactive" value="{L_bz_set_inactive}" class="mainoption" /><i class="fa fa-check-square-o"></i> {L_bz_set_inactive}</button>
+				<input type="hidden" name="del" value="1" id="mass_del_submit" disabled="disabled" />
+				<!-- IF S_DIFF -->
+					<button  type="submit" name="copy" value="{L_bz_copy_zone}" class="mainoption" /><i class="fa fa-copy"></i> {L_bz_copy_zone}</button>
+					{DIFF_DROP}
+				<!-- ENDIF -->
+			</th>
+		</tr>
+	</table>
+{CSRF_TOKEN}
+</form>

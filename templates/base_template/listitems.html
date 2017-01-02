@@ -1,0 +1,33 @@
+<form method="get" action="{ACTION}">
+	<div class="contentHeader">
+		<h1 class="contentTitle">{L_menu_itemhist}</h1>
+	</div>
+	
+	<fieldset class="settings mediumsettings" id="toggleItemsearch">
+		<legend>{L_search}<span class="toggle_button"></span></legend>
+		<div class="toggle_container">
+			<dl>
+				<dt><label>{L_Itemsearch_searchby}</label></dt>
+				<dd><input name="search" class="input" type="text" size="40" /></dd>
+			</dl>
+			<dl>
+				<dt><label></label></dt>
+				<dd><label><input name="search_type" class="input" type="radio"value="itemname" checked="checked" />{L_Itemsearch_item}</label>
+				<label><input name="search_type" class="input" type="radio"value="buyer" />{L_Itemsearch_buyer}</label>
+				<label><input name="search_type" class="input" type="radio"value="raidname" />{L_Itemsearch_raid}</label>
+				</dd>
+			</dl>
+			
+			<button class="mainoption" type="submit" name="searchbutton"><i class="fa fa-search"></i>{L_search}</button>
+
+		</div>
+	</fieldset>
+	<br />
+	<table class="table fullwidth hptt colorswitch scrollable-x">
+		{PAGE_OUT}
+	</table>
+	<div class="center pagination_wrapper">
+		{ITEM_PAGINATION}
+	</div>
+{CSRF_TOKEN}
+</form>

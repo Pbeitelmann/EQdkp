@@ -1,0 +1,217 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li><a href="{EQDKP_ROOT_PATH}admin/manage_pagelayouts.php{SID}">{L_page_manager}</a>
+		<li><a href="{EQDKP_ROOT_PATH}admin/manage_pagelayouts.php{SID}">{L_lm_title}</a>
+		<li class="current"><a>{FILENAME}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<form method="post" action="{ACTION}" name="post">
+<fieldset class="settings  mediumsettings">
+	<legend>{L_lm_title}: {FILENAME}</legend>
+	<dl>
+		<dt><label>{L_description}:</label></dt>
+		<dd><input type="text" name="description" value="{DESCRIPTION}" class="input" style="width:90%" /></dd>
+	</dl>
+	<!-- BEGIN param_row -->
+	<dl>
+		<dt><label>{param_row.NAME}:</label></dt>
+		<dd>{param_row.FIELD}</dd>
+	</dl>
+	<!-- END param_row -->
+	
+	<!-- BEGIN subs_row -->
+	<dl>
+		<dt><label>{subs_row.NAME}</label></dt>
+		<dd>{subs_row.FIELD}</dd>
+	</dl>
+	<!-- END subs_row -->
+</fieldset>
+
+
+
+<div id="plus_pm_pages_tabs">
+	<ul>
+	<!-- BEGIN page_list -->
+		<li><a href="#page-{page_list.ID}" <!-- IF page_list.ADMIN -->class="adminicon" style="background-position: 7px 3px;" title="{L_admin_page}"<!-- ENDIF -->><span>{page_list.NAME}</span></a></li>
+	<!-- END page_list -->
+	</ul>
+	<!-- BEGIN page_row -->
+	<div id="page-{page_row.ID}">
+		<!-- IF page_row.S_ROSTER -->
+		<div class="tableHeader">
+			<h2>{L_lm_roster_settings}</h2>
+		</div>
+		<table id="table_roster" class="table fullwidth colorswitch">
+			<tr>
+				<td class="nowrap" width="50">{L_lm_roster_classorrole}</td>
+				<td>{ROSTER_DD}</td>
+			</tr>
+			<tr>
+				<td class="nowrap">{L_core_sett_f_show_twinks}</td>
+				<td><input type="checkbox" value="1" name="roster_show_twinks" {ROSTER_SHOW_TWINKS}/></td>
+			</tr>
+			<tr>
+				<td class="nowrap">{L_show_hidden_ranks}</td>
+				<td><input type="checkbox" value="1" name="roster_show_hidden" {ROSTER_SHOW_HIDDEN}/></td>
+			</tr>	
+		</table>
+		<!-- ENDIF -->
+		
+		<!-- IF page_row.S_LEADERBORD -->
+		<div class="tableHeader">
+			<h2>{L_lm_leaderbord_settings}</h2>
+		</div>
+		<table id="table_leaderbord" class="table fullwidth colorswitch">
+			<tr>
+				<td class="nowrap">{L_lm_lb_maxpercolumn}</td>
+				<td><input type="text" size="4" name="lb_maxpercolumn" value="{LB_MAXPERCOLUMN}" class="input" /></td>
+			</tr>
+			<tr>
+				<td class="nowrap">{L_lm_lb_maxperrow}</td>
+				<td><input type="text" size="4" name="lb_maxperrow" value="{LB_MAXPERROW}" class="input" /></td>
+			</tr>
+			<tr>
+				<td class="nowrap">{L_lm_sort_direction}</td>
+				<td>{LB_SORTDIR}</td>
+			</tr>
+			<tr>
+				<td class="nowrap">{L_lm_lb_column_type}</td>
+				<td>{LB_COLUMN_DD}</td>
+			</tr>
+			<tr>
+				<td class="nowrap">{L_lm_default_pool}</td>
+				<td>{LB_POOL_DD}</td>
+			</tr>
+		</table>
+		<div class="tableHeader">
+			<h2>{L_lm_lb_class_sort}</h2>
+		</div>
+		<table id="leaderboard_classid" class="table fullwidth sortingtable" {CLASSDISPLAY}>
+			<!-- BEGIN class_row -->
+			<tr>
+				<td width="50" align="center">
+					<span class="ui-icon ui-icon-arrowthick-2-n-s" title="{L_dragndrop}" />
+				</td>
+				<td>
+					<input type="hidden" name="lb_classes[]" value="{page_row.class_row.CLASS}" /> {page_row.class_row.NAME}
+				</td>
+			</tr>
+			<!-- END class_row -->
+		</table>
+
+		<div class="tableHeader" {ROLEDISPLAY}>
+			<h2>{L_lm_lb_role_sort}</h2>
+		</div>
+		<table id="leaderboard_defaultrole" class="table fullwidth sortingtable" {ROLEDISPLAY}>
+			<!-- BEGIN role_row -->
+			<tr>
+				<td width="50" align="center">
+					<span class="ui-icon ui-icon-arrowthick-2-n-s" title="{L_dragndrop}" />
+				</td>
+				<td>
+					<input type="hidden" name="lb_roles[]" value="{page_row.role_row.ROLE}" /> {page_row.role_row.NAME}
+				</td>
+			</tr>
+			<!-- END role_row -->
+		</table>
+		<br />
+		<!-- ENDIF -->
+		
+		<!-- IF page_row.S_SK_STARTLIST -->
+		
+		
+		<!-- ENDIF -->
+		
+		<!-- BEGIN page_object_row -->
+		<div class="tableHeader">
+			<h2>{page_row.page_object_row.TABLE_TITLE}</h2>
+		</div>
+		<table id="table_{page_row.page_object_row.ID}" class="table fullwidth colorswitch sortingtable">
+			<thead>
+				<tr class="not-sortable">
+					<th colspan="8">{L_lm_table_settings}</th>
+				</tr>
+				<tr class="not-sortable">
+					<td colspan="2" class="nowrap">{L_lm_show_numbers}</td>
+					<td colspan="6">{page_row.page_object_row.NUMBERS}</td>
+				</tr>
+				<tr class="not-sortable">
+					<td colspan="2" class="nowrap">{L_lm_sort_direction}</td>
+					<td colspan="6">{page_row.page_object_row.TABLE_SORT_DIR}</td>
+				</tr>
+				<!-- IF page_row.page_object_row.S_ADD_SETTS -->
+				<!-- BEGIN add_setts -->
+				<tr class="not-sortable">
+					<td colspan="2" class="nowrap">{page_row.page_object_row.add_setts.LANG}</td>
+					<td colspan="6">{page_row.page_object_row.add_setts.FIELD}</td>
+				</tr>
+				<!-- END add_setts -->
+				<!-- ENDIF -->
+				<tr class="not-sortable">
+					<th colspan="8">{L_lm_table_columns}</th>
+				</tr>
+				<tr class="not-sortable">
+					<th width="24">&nbsp;</th>
+					<th width="24">&nbsp;</th>
+					<th width="80">{L_lm_column_preset}</th>
+					<th>{L_lm_column_sortable}</th>
+					<th>{L_lm_column_default_sort}</th>
+					<th>{L_lm_column_th_add}</th>
+					<th>{L_lm_column_td_add}</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr class="not-sortable">
+					<th colspan="99">
+						{page_row.page_object_row.DROPDOWN}
+						<button class="add_row_button mainoption" type="button" id="button_{page_row.page_object_row.ID}" {page_row.page_object_row.DISABLED}><i class="fa fa-plus"></i>{L_lm_add_row}</button>
+					</th>
+				</tr>
+			</tfoot>
+			<tbody class="colorswitch">
+				<!-- BEGIN preset_row -->
+				<tr>
+					<td align="center">
+						<span class="ui-icon ui-icon-arrowthick-2-n-s" title="{L_dragndrop}" />
+					</td>
+					<td align="center">
+						<i class="fa fa-trash-o fa-lg del_me" title="{L_lm_delete_row}"></i>
+						<span class="delete_id" style="display:none;">{page_row.page_object_row.preset_row.ID}</span>
+						<span class="prefix_id" style="display:none;">{page_row.page_object_row.PREFIX}</span>
+					</td>
+					<td class="presetname nowrap">
+						<span title="{page_row.page_object_row.preset_row.CODE}">{page_row.page_object_row.preset_row.NAME}</span>
+					</td>
+					<td>
+						{page_row.page_object_row.preset_row.SORTABLE}
+					</td>
+					<td>
+						<input class="default_sort" type="radio" name="{page_row.page_object_row.PREFIX}[default_sort]" value="{page_row.page_object_row.preset_row.CODE}" {page_row.page_object_row.preset_row.DEFAULT_SORT} />
+					</td>
+					<td>
+						<input class="th_add" type="text" name="{page_row.page_object_row.PREFIX}[th_add][{page_row.page_object_row.preset_row.CODE}]" size="40" value="{page_row.page_object_row.preset_row.TH_ADD}" />
+					</td>
+					<td>
+						<input class="td_add" type="text" name="{page_row.page_object_row.PREFIX}[td_add][{page_row.page_object_row.preset_row.CODE}]" size="40" value="{page_row.page_object_row.preset_row.TD_ADD}" />
+					</td>
+				</tr>
+				<!-- END preset_row -->
+			</tbody>
+		</table>
+		<br />
+		<!-- END page_object_row -->
+	</div>
+	<!-- END page_row -->
+</div>
+
+<div class="contentFooter">
+	<input type="hidden" name="filename" value="{FILENAME}" />
+	<button class="mainoption" type="submit" name="save"><i class="fa fa-check"></i>{L_save}</button>
+	<button class="liteoption" type="submit" name=""><i class="fa fa-chevron-left"></i>{L_cancel}</button>
+</div>
+{CSRF_TOKEN}
+</form>

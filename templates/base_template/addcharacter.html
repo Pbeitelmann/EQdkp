@@ -1,0 +1,79 @@
+<!--<script type="text/javascript">
+ var mainid = {MAIN_ID};
+ var others = {COUNT_OTHER_MEMBERS};
+ 
+ function check_form(){
+	var selected_main = $('#main_id').val();
+	if (selected_main == mainid || others < 1) {
+		return true;
+	}
+	
+	mainchar_change();
+	return false;
+ }
+ 
+ function handle_assoc_members() {
+	if ($('#associated_members').prop("checked")){
+		cbvalue = 1;
+	} else {
+		cbvalue = 0;
+	}
+	$('#assoc_members').val(cbvalue);
+ }
+ 
+</script>-->
+<form method="post" action="{ACTION}" name="{FORM_ID}" id="{FORM_ID}" class="fv_checkit">
+<input type="hidden" name="adminmode" size="2" value="{ADMINMODE}"/>
+
+<div id='addchar_tabs'>
+	<ul>
+		<!-- BEGIN tabs --> <li><a href='#fragment-{tabs.ID}'><span>{tabs.NAME}</span></a></li><!-- END tabs -->
+		<li><a href='#fragment-notes'><span>{L_uc_tab_notes}</span></a></li>
+		<!-- IF ADMINMODE -->
+		<li><a href='#fragment-history'><span>{L_uc_transfer_history}</span></a></li>
+		<!-- ENDIF -->
+	</ul>
+
+	{HIDDEN}
+	<!-- BEGIN tabs -->
+	<div id="fragment-{tabs.ID}">
+		<fieldset class="settings">
+			<!-- BEGIN fields -->
+			<dl>
+				<dt><label>{tabs.fields.NAME}</label><br /><span>{tabs.fields.HELP}</span></dt>
+				<dd>{tabs.fields.FIELD}</dd>
+			</dl>
+			<!-- END fields -->
+		</fieldset>
+	</div>
+	<!-- END tabs -->
+
+	<div id="fragment-notes">
+		<fieldset class="settings mediumsettings">
+			<dl>
+				<dt><label>{L_uc_notes}</label><br /><span>{L_uc_notes_help}</span></dt>
+				<dd><textarea name="notes" class="input" rows="12" style="width: 95%">{NOTES}</textarea></dd>
+			</dl>
+		</fieldset>
+	</div>
+	<!-- IF ADMINMODE -->
+	<div id="fragment-history">
+		<fieldset class="settings">
+			<dl>
+				<dt><label>{L_uc_transfer_history_receiver}</label><br /><span>{L_uc_transfer_history_receiver_note}</span></dt>
+				<dd>{DD_HISTORY_RECEIVER}</dd>
+			</dl>
+		</fieldset>
+	</div>
+	<!-- ENDIF -->
+</div>
+<br />
+
+	<!-- IF U_IS_EDIT -->
+	<button class="mainoption" type="submit" name="edit" id="editButton"><i class="fa fa-check"></i>{L_uc_save_char}</button>
+	<!-- ELSE -->
+	<button class="mainoption" type="submit" name="add"><i class="fa fa-check"></i>{L_uc_add_char}</button>
+	<!-- ENDIF -->
+	<input type="hidden" name="assoc_members" id="assoc_members" value="0" />
+{CSRF_TOKEN}
+</form>

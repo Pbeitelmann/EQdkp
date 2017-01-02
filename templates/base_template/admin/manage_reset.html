@@ -1,0 +1,38 @@
+<div class="breadcrumb-container">
+	<ul class="breamcrumb">
+		<li><a href="{EQDKP_CONTROLLER_PATH}{SID}" title="{L_home}"><i class="fa fa-home"></i></a></li>
+		<li><a href="{EQDKP_ROOT_PATH}admin/{SID}">{L_menu_admin_panel}</a>
+		<li class="current"><a>{L_reset_header}</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<div class="contentHeader">
+	<h1 class="contentTitle">{L_reset_header}</h1>
+</div>	
+<form method="post" action="{ACTION}" name="post">
+	<div class="infobox infobox-large infobox-red clearfix">
+		<i class="fa fa-exclamation-triangle fa-4x pull-left"></i> {L_reset_infotext}
+	</div>
+
+	<table class="table fullwidth colorswitch hoverrows">  
+		<tr>
+			<th width="10" align="left"><input type="checkbox" id="reset_selectall" /></th>
+			<th align="left">{L_reset_type}</th>
+			<th align="left">{L_description}</th>
+		</tr>
+		<!-- BEGIN reset_row -->
+		<tr>
+			<td class="nowrap">
+				<input type="checkbox" name="selected[]" value="{reset_row.VAL_NAME}" id="cb_{reset_row.VAL_NAME}" class="cb_select_class" />
+			</td>
+			<td class="nowrap"><strong>{reset_row.TYPE}</strong></td>
+			<td >{reset_row.DISC}</td>
+		</tr>
+		<!-- END reset_row -->
+	</table>
+	<div class="contentFooter">
+		<button class="mainoption" name="del" type="button" onclick="delete_warning();" id="delete"><i class="fa fa-times"></i>{L_delete_selected}</button>
+		<input type="hidden" name="del" value="1" disabled="disabled" id="mass_del_submit" />
+	</div>
+{CSRF_TOKEN}
+</form>
