@@ -423,6 +423,7 @@ AyE90DBDSehGSqq0uR1xcO1bADznQ2evEXM4agOsn2fvZjA3oisTAZevJ7XHZRcx
 
 		// check if there are updates available
 		public function UpdatesAvailable($pcore=false){
+			return false;
 			if($pcore){
 				return (isset($this->updates['pluskernel'])) ? true : false;
 			}else{
