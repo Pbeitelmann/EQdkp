@@ -517,6 +517,7 @@ class Manage_Live_Update extends page_generic {
 	}
 
 	private function getNewVersion($returnData = false){
+		return false;
 		$updates = $this->repo->UpdatesAvailable(true);
 		if ($updates){
 			if ($returnData) return $this->repo->updates['pluskernel'];
