@@ -51,10 +51,6 @@ $german_array = array(
 		10	=> 'Krieger',
 	),
 	'talents'		=> array(
-		// Death Knight
-		0 	=> 'Blut',
-		1 	=> 'Frost',
-		2 	=> 'Unheilig',
 		// Druid
 		3 	=> 'Gleichgewicht',
 		4 	=> 'Wildheit',
@@ -92,13 +88,6 @@ $german_array = array(
 		28 	=> 'Waffen',
 		29 	=> 'Furor',
 		30 	=> 'Schutz',
-		// Monk
-		31 	=> 'Braumeister',
-		32 	=> 'Nebelwirker',
-		33 	=> 'Windläufer',
-		// demon hunter
-		34	=> 'Verwüstung',
-		35	=> 'Rachsucht',
 	),
 	'roles' => array(
 		1	=> 'Heiler',
