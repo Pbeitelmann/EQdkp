@@ -97,7 +97,6 @@ $english_array = array(
 	"trade_engraving" => 'Enchanting',
 	"trade_engineering" => 'Engineering',
 	"trade_herbalism" => 'Herbalism',
-	"inv_inscription_tradeskill01" => 'Inscription',
 	"inv_misc_gem_01" => 'Jewelcrafting',
 	"trade_leatherworking" => 'Leatherworking',
 	"inv_pick_02" => 'Mining',
