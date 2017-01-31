@@ -43,11 +43,6 @@ $english_array = array(
 	6 => 'Undead',
 	7 => 'Orc',
 	8 => 'Tauren',
-	9 => 'Draenei',
-	10 => 'Blood Elf',
-	11 => 'Worgen',
-	12 => 'Goblin',
-	13 => 'Pandaren',
 	),
 	"classes" => array(
 	0 => 'Unknown',

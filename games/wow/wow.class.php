@@ -99,11 +99,6 @@ if(!class_exists('wow')) {
 						6 	=> array(1,3,4,6,7,9,10,11),		// Undead
 						7 	=> array(1,3,4,7,8,9,10,11),		// Orc
 						8 	=> array(1,2,3,5,6,8,10,11),		// Tauren
-						9 	=> array(1,3,4,5,6,8,10,11),		// Draenai
-						10 	=> array(1,3,4,5,6,7,9,10,11,12),	// Blood Elf
-						11 	=> array(1,2,3,4,6,7,9,10),			// Worgen
-						12 	=> array(1,3,4,6,7,8,9,10),			// Goblin
-						13 	=> array(3,4,6,7,8,10,11),			// Pandaren
 					),
 				),
 			),

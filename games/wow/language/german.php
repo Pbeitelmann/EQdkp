@@ -37,11 +37,6 @@ $german_array = array(
 		'Untoter',
 		'Ork',
 		'Taure',
-		'Draenei',
-		'Blutelf',
-		'Worg',
-		'Goblin',
-		'Pandaren'
 	),
 	'classes' => array(
 		0	=> 'Unbekannt',
