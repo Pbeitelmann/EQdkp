@@ -781,26 +781,6 @@ class core extends gen_class {
 		public function notifications(){
 			if ($this->notifications) return;
 			
-			//Update Warnings
-			if ($this->user->check_auths(array('a_extensions_man', 'a_maintenance'), 'or', false)){
-				$objRepository = register("repository");
-				if (count($objRepository->updates)){
-					$arrUpdates = $objRepository->updates;
-					if (isset($arrUpdates['pluskernel']) && $this->user->check_auth("a_maintenance", false)){
-						$this->ntfy->add_persistent('eqdkp_core_update', $this->user->lang("pluskernel_new_version"), $this->server_path.'admin/manage_live_update.php'.$this->SID, 2, 'fa-cog');
-						unset($arrUpdates['pluskernel']);
-					}
-			
-					if (count($arrUpdates)){
-						$text = "";
-						foreach($arrUpdates as $id => $data){
-							$text	.= "<br />".sprintf($this->user->lang('lib_pupd_updtxt_tt'), (($this->user->lang($data['plugin'])) ? $this->user->lang($data['plugin']) : $data['name']), $data['version'], $data['plugin'], $data['release']);
-						}
-						$this->ntfy->add_persistent('eqdkp_extensions_update', $this->user->lang("lib_pupd_intro").$text, $this->server_path.'admin/manage_extensions.php'.$this->SID, 2, 'fa-cogs');
-					}
-				}
-			}
-			
 			//Check for unpublished articles
 			$arrCategories = $this->pdh->get('article_categories', 'unpublished_articles_notify', array());
 			if (count($arrCategories) > 0 && $this->user->check_auth('a_articles_man',false)){
