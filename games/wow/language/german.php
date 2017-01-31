@@ -74,7 +74,7 @@ $german_array = array(
 		18 	=> 'Schatten',
 		// Rogue
 		19 	=> 'Meucheln',
-		20 	=> 'Gesetztlosigkeit',
+		20 	=> 'Kampf',
 		21 	=> 'Täuschung',
 		// Shaman
 		22 	=> 'Elementar',
