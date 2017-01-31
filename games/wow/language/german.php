@@ -101,7 +101,6 @@ $german_array = array(
 		'trade_engraving'				=> 'Verzauberkunst',
 		'trade_engineering'				=> 'Ingenieurskunst',
 		'trade_herbalism'				=> 'Kräuterkunde',
-		'inv_inscription_tradeskill01'	=> 'Inschriftenkunde',
 		'inv_misc_gem_01'				=> 'Juwelenschleifen',
 		'trade_leatherworking'			=> 'Lederverarbeitung',
 		'inv_pick_02'					=> 'Bergbau',
