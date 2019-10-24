@@ -50,6 +50,7 @@ if(!class_exists('rli_parse')) {
 				if($back[1]) {
 					$this->raid->flush_data();
 					$data = $parser::parse($log);
+					
 					foreach($data as $type => $ddata) {
 						switch($type) {
 							case 'zones':

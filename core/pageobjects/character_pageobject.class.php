@@ -90,6 +90,9 @@ class character_pageobject extends pageobject {
 		$this->tpl->assign_vars(array (
 			'EVENT_ATT_OUT' => $hptt->get_html_table($this->in->get('esort', ''), $this->vc_build_url('esort')),
 		));
+		$this->tpl->assign_vars(array (
+			'BENCH_ATT' => $this->getBenchAttendance($this->url_id),
+		));
 
 		// Load member Data to an array
 		$member			= $this->pdh->get('member', 'array', array($this->url_id));
@@ -243,6 +246,23 @@ class character_pageobject extends pageobject {
 			if($key != $exclude && !empty($par)) $url .= '&amp;'.$key.'='.$par;
 		}
 		return $url;
+	}
+
+	public function getBenchAttendance($memberId)
+	{
+		$query = "SELECT
+					m.member_name,
+					SUM(IF(a.raidgroup = '4', 1, 0)) as ersatzbank
+					from eqdkp22_calendar_raid_attendees a
+					join eqdkp22_members m on a.member_id = m.member_id
+					where m.member_id = {$memberId}
+					";
+
+		$benchAmount = $this->db->query($query, PDO::FETCH_ASSOC)["ersatzbank"];
+
+		return '<span class="neutral"> Molten Core & Blackwing Lair: '. $benchAmount .'</span>';
+
+
 	}
 }
 ?>

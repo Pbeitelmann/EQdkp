@@ -310,6 +310,9 @@ class user_pageobject extends pageobject {
 		$this->tpl->assign_vars(array (
 			'EVENT_ATT_OUT' => $hptt->get_html_table($this->in->get('esort', ''), $this->vc_build_url('esort')),
 		));
+		$this->tpl->assign_vars(array (
+			'BENCH_ATT' => $this->getBenchAttendance(),
+		));
 		
 		
 		$this->jquery->Dialog('usermailer', $this->user->lang('adduser_send_mail'), array('url'=>$this->server_path."email.php".$this->SID."&user=".$row['user_id'], 'width'=>'660', 'height'=>'450'));
@@ -374,6 +377,15 @@ class user_pageobject extends pageobject {
 			if($key != $exclude && !empty($par)) $url .= '&amp;'.$key.'='.$par;
 		}
 		return $url;
+	}
+
+	public function getBenchAttendance()
+	{
+		$objQuery = $this->db->query("SELECT * FROM __multidkp ORDER BY multidkp_sortid ASC;", PDO::FETCH_ASSOC);
+		if($objQuery){
+
+		}
+		//todo: implement here
 	}
 }
 ?>

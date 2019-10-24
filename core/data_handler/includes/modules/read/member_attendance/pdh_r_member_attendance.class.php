@@ -188,7 +188,16 @@ if ( !class_exists( "pdh_r_member_attendance" ) ) {
 		}
 
 		public function get_html_attendance($member_id, $multidkp_id, $time_period, $with_twinks=true){
-			if(!isset($this->member_attendance[$time_period][$multidkp_id])){
+
+            $objQuery = $this->db->query("SELECT * FROM __multidkp ORDER BY multidkp_sortid ASC;", PDO::FETCH_ASSOC);
+            if($objQuery){
+
+            }
+            var_dump($objQuery);
+            //echo("test");die;
+
+
+            if(!isset($this->member_attendance[$time_period][$multidkp_id])){
 				$this->init_attendance($time_period, $multidkp_id);
 			}
 			$mainid = $this->pdh->get('member', 'mainid', array($member_id));

@@ -2,8 +2,8 @@
 
 $ftphost = '127.0.0.1';
 $ftpport = 21;
-$ftpuser = '';
-$ftppass = '';
+$ftpuser = 'Gekirin';
+$ftppass = 'raikiri1!';
 $ftproot = '';
 $use_ftp = 0;
 define("CHMOD", 0755);
@@ -13,7 +13,7 @@ $dbhost = 'localhost';
 $dbport = false;
 $dbname = 'eqdkp';
 $dbuser = 'eqdkp';
-$dbpass = 'raikiri1!';
+$dbpass = 'FPLacrGQk83cbzjTcqsu3SD3G4cVYQ2F';
 $dbpers = false;
 $table_prefix = 'eqdkp22_';
 
